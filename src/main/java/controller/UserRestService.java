@@ -5,7 +5,9 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import model.User;
 import model.UserDAO;
+import util.SymmetricEncryptionUtil;
 
+import javax.crypto.SecretKey;
 import java.util.List;
 
 @Path("/users")
@@ -36,6 +38,9 @@ public class UserRestService {
             UserDAO userDAO = new UserDAO();
             User user = userDAO.getUserByUsername(username);
             if (user != null) {
+                SecretKey secretKey = SymmetricEncryptionUtil.generateKey();
+                String encryptedEmail = SymmetricEncryptionUtil.encrypt(user.getEmail(), secretKey);
+                user.setEmail(encryptedEmail); // Set the encrypted email
                 return Response.ok(user).build();
             } else {
                 return Response.status(Response.Status.NOT_FOUND).entity("User not found").build();
