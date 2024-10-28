@@ -14,6 +14,31 @@
         <url-pattern>/UserServlet</url-pattern> <!-- URL 路径 -->
     </servlet-mapping>
 
-    <!-- 其他的 servlet 映射和配置... -->
+    <!-- RESTful 服务映射 -->
+    <servlet>
+        <servlet-name>jersey-servlet</servlet-name>
+        <servlet-class>org.glassfish.jersey.servlet.ServletContainer</servlet-class>
+        <init-param>
+            <param-name>jersey.config.server.provider.packages</param-name>
+            <param-value>controller</param-value>
+        </init-param>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>jersey-servlet</servlet-name>
+        <url-pattern>/api/*</url-pattern> <!-- RESTful 服务访问路径 -->
+    </servlet-mapping>
+
+    <!-- SOAP Web Service 配置 -->
+    <servlet>
+        <servlet-name>UserSOAPService</servlet-name>
+        <servlet-class>controller.UserSOAPService</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>UserSOAPService</servlet-name>
+        <url-pattern>/UserSOAPService</url-pattern>
+    </servlet-mapping>
 
 </web-app>

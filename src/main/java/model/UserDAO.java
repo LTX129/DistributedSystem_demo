@@ -28,6 +28,37 @@ public class UserDAO {
         conn.close();
     }
 
+    // 获取用户信息通过用户名
+    public User getUserByUsername(String username) throws Exception {
+        String cacheKey = "user_" + username;
+        User user = (User) CacheUtility.get(cacheKey);
+
+        if (user == null) {
+            Connection conn = DBConnection.initializeDatabase();
+            String query = "SELECT * FROM users WHERE username = ?";
+            PreparedStatement pstmt = conn.prepareStatement(query);
+            pstmt.setString(1, username);
+            ResultSet rs = pstmt.executeQuery();
+
+            if (rs.next()) {
+                user = new User();
+                user.setId(rs.getInt("id"));
+                user.setUsername(rs.getString("username"));
+                user.setEmail(rs.getString("email"));
+                user.setRole(rs.getString("role"));
+
+                // 将用户信息存入缓存
+                CacheUtility.put(cacheKey, user);
+            }
+
+            rs.close();
+            pstmt.close();
+            conn.close();
+        }
+
+        return user;
+    }
+
     // 验证用户登录
     public User validateUser(String usernameOrEmail, String password) throws Exception {
         String cacheKey = "user_" + usernameOrEmail;

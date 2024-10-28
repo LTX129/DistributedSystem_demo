@@ -103,49 +103,38 @@
 
 <script>
     document.getElementById("registerForm").addEventListener("submit", function (event) {
-        let isValid = true;
+        event.preventDefault(); // 阻止表单的默认提交行为
 
-        // 用户名验证
-        const username = document.getElementById("username");
-        const usernameError = document.getElementById("usernameError");
-        if (username.value.length < 4 || username.value.length > 20) {
-            username.classList.add("error");
-            usernameError.textContent = "Username must be between 4 and 20 characters.";
-            isValid = false;
-        } else {
-            username.classList.remove("error");
-            usernameError.textContent = "";
-        }
+        const username = document.getElementById("username").value;
+        const password = document.getElementById("password").value;
+        const email = document.getElementById("email").value;
 
-        // 密码验证
-        const password = document.getElementById("password");
-        const passwordError = document.getElementById("passwordError");
-        if (password.value.length < 8) {
-            password.classList.add("error");
-            passwordError.textContent = "Password must be at least 8 characters long.";
-            isValid = false;
-        } else {
-            password.classList.remove("error");
-            passwordError.textContent = "";
-        }
-
-        // 邮箱验证
-        const email = document.getElementById("email");
-        const emailError = document.getElementById("emailError");
-        if (email.value.length > 50) {
-            email.classList.add("error");
-            emailError.textContent = "Email must be 50 characters or fewer.";
-            isValid = false;
-        } else {
-            email.classList.remove("error");
-            emailError.textContent = "";
-        }
-
-        if (!isValid) {
-            event.preventDefault(); // 阻止表单提交
-        }
+        fetch("http://localhost:8080/demo_war/api/users/register", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                username: username,
+                password: password,
+                email: email,
+                role: "customer"
+            })
+        })
+            .then(response => response.text())  // 改为 text()
+            .then(data => {
+                if (data && data.includes("successfully")) {
+                    window.location.href = "register_success.jsp";
+                } else {
+                    alert("Registration failed! Please try again.");
+                }
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                alert("An error occurred. Please try again.");
+            });
     });
-</script>
 
+</script>
 </body>
 </html>
