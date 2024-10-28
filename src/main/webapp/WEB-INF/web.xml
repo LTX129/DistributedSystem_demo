@@ -14,6 +14,17 @@
         <url-pattern>/UserServlet</url-pattern> <!-- URL 路径 -->
     </servlet-mapping>
 
+    <!-- CartServlet 映射 -->
+    <servlet>
+        <servlet-name>CartServlet</servlet-name>
+        <servlet-class>controller.CartServlet</servlet-class> <!-- 确保包名和类名正确 -->
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>CartServlet</servlet-name>
+        <url-pattern>/CartServlet</url-pattern> <!-- URL 路径 -->
+    </servlet-mapping>
+
     <!-- RESTful 服务映射 -->
     <servlet>
         <servlet-name>jersey-servlet</servlet-name>
@@ -40,5 +51,16 @@
         <servlet-name>UserSOAPService</servlet-name>
         <url-pattern>/UserSOAPService</url-pattern>
     </servlet-mapping>
+
+    <servlet>
+        <servlet-name>CheckoutServlet</servlet-name>
+        <servlet-class>controller.CheckoutServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>CheckoutServlet</servlet-name>
+        <url-pattern>/CheckoutServlet</url-pattern>
+    </servlet-mapping>
+
 
 </web-app>

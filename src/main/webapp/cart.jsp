@@ -1,3 +1,4 @@
+<%@ page import="model.Cart" %>
 <%@ page import="model.CartItem" %>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <% String username = org.apache.commons.text.StringEscapeUtils.escapeHtml4(request.getParameter("username")); %>
@@ -98,11 +99,12 @@
     </div>
 
     <%
-        // 获取购物车项列表（假设是 List<CartItem> 类型，存储在 session 或 request 中）
-        java.util.List<CartItem> cartItems = (java.util.List<CartItem>) session.getAttribute("cartItems");
+        // 获取购物车对象（从 session 中获取）
+        Cart cart = (Cart) session.getAttribute("cart");
         double totalPrice = 0.0;
 
-        if (cartItems != null && !cartItems.isEmpty()) {
+        if (cart != null && !cart.getItems().isEmpty()) {
+            java.util.List<CartItem> cartItems = cart.getItems();
     %>
     <form action="CartServlet" method="post">
         <div class="cart-table">
@@ -160,7 +162,7 @@
     <div class="empty-cart">
         <img src="https://img.icons8.com/ios-filled/100/empty-box.png" alt="Empty Cart">
         <p>Your cart is empty.</p>
-        <a href="product.jsp">Continue Shopping</a>
+        <a href="index.jsp">Continue Shopping</a>
     </div>
     <%
         }

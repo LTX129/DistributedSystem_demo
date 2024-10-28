@@ -33,11 +33,33 @@
     <%
         // 获取请求参数中的商品 ID
         String productIdStr = request.getParameter("id");
-        int productId = Integer.parseInt(productIdStr);
+
+        if (productIdStr == null || productIdStr.isEmpty()) {
+            // 如果没有提供 productId，重定向到产品列表页或显示错误信息
+            response.sendRedirect("index.jsp"); // 或者重定向到主页面/产品列表页面
+            return; // 确保不再继续处理 JSP
+        }
+
+        // 获取请求参数中的商品 ID
+        int productId;
+        try {
+            productId = Integer.parseInt(productIdStr);
+        } catch (NumberFormatException e) {
+            // 如果 productId 不是有效的整数，重定向到产品列表页
+            response.sendRedirect("index.jsp");
+            return;
+        }
+
         ProductDAO productDAO = new ProductDAO();
         Product product = productDAO.getProductById(productId);
 
-        if (product != null) {
+        if (product == null) {
+            // 如果找不到商品，显示友好的错误信息
+    %>
+    <p>Product not found. Please <a href="index.jsp">return to the main page</a> to continue shopping.</p>
+    <%
+            return; // 确保不再继续处理 JSP
+        }
     %>
     <div class="card mb-4">
         <div class="row g-0">
@@ -60,13 +82,6 @@
             </div>
         </div>
     </div>
-    <%
-    } else {
-    %>
-    <p>Product not found.</p>
-    <%
-        }
-    %>
 </div>
 
 <!-- 返回主菜单的按钮 -->

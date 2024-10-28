@@ -8,6 +8,7 @@ import java.math.BigDecimal;
 import model.Product;
 import model.CartItem;
 import model.Cart;
+import model.ProductDAO;
 
 public class CartServlet extends HttpServlet {
 
@@ -29,8 +30,9 @@ public class CartServlet extends HttpServlet {
             int productId = Integer.parseInt(request.getParameter("productId"));
             int quantity = Integer.parseInt(request.getParameter("quantity"));
 
-            // 从数据库获取商品信息（此处假设你已有方法获取商品）
-            Product product = getProductFromDatabase(productId); // 需要你实现此方法
+            // 从数据库获取商品信息
+            ProductDAO productDAO = new ProductDAO();
+            Product product = productDAO.getProductById(productId);
 
             if (product != null) {
                 CartItem item = new CartItem(product, quantity);
@@ -45,6 +47,9 @@ public class CartServlet extends HttpServlet {
                 item.setQuantity(newQuantity);
             }
         }
+
+        // 将购物车存回 session
+        session.setAttribute("cart", cart);
 
         // 重定向回购物车页面
         response.sendRedirect("cart.jsp");
