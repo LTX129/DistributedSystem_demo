@@ -1,7 +1,11 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page import="java.util.List, java.util.Collections" %>
 <%@ page import="model.Product, model.ProductDAO" %>
-<% String username = org.apache.commons.text.StringEscapeUtils.escapeHtml4(request.getParameter("username")); %>
+
+<%
+    model.User user = (model.User) session.getAttribute("user");  // 获取用户信息
+    boolean isLoggedIn = (user != null);  // 检查用户是否已登录
+%>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -24,6 +28,9 @@
             background-color: #e2231a;
             color: white;
             padding: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
         }
         header .logo {
             display: flex;
@@ -37,9 +44,8 @@
         }
         header .search-bar {
             width: 40%;
-            margin-left: auto;
-            margin-right: auto;
             display: flex;
+            align-items: center;
         }
         header .search-bar input {
             width: 100%;
@@ -112,18 +118,19 @@
 </head>
 <body>
 
-<header class="d-flex align-items-center justify-content-between">
+<header>
     <div class="logo">
         <img src="https://www.jd.com/favicon.ico" alt="logo"> 京东
     </div>
     <div class="search-bar">
-        <input type="text" placeholder="Search for products">
-        <button><i class="fas fa-search"></i></button>
+        <form id="searchForm" action="search.jsp" method="get" onsubmit="return checkLogin()">
+            <input type="text" name="query" id="searchQuery" placeholder="Search for products" required>
+            <button type="submit" id="searchButton"><i class="fas fa-search"></i></button>
+        </form>
     </div>
     <div>
         <%
-            model.User user = (model.User) session.getAttribute("user");  // 获取用户信息
-            if (user != null) {  // 如果用户已登录
+            if (isLoggedIn) {  // 如果用户已登录
         %>
         <span class="text-white">Hello, <%= user.getUsername() %>!</span>
         <a href="logout.jsp" class="text-white">Logout</a>
@@ -164,7 +171,17 @@
             <h5><%= product.getName() %></h5>
             <p><%= product.getDescription() %></p>
             <p><strong>Price: $<%= product.getPrice() %></strong></p>
+            <%
+                if (isLoggedIn) {
+            %>
             <a href="product.jsp?id=<%= product.getId() %>" class="btn btn-primary">View Details</a>
+            <%
+            } else {
+            %>
+            <a href="login.jsp" class="btn btn-primary">View Details</a>
+            <%
+                }
+            %>
         </div>
         <%
             }
@@ -183,6 +200,17 @@
 
 <!-- 引入 Bootstrap JS 库 -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    function checkLogin() {
+        const isLoggedIn = <%= isLoggedIn %>;  // 获取用户登录状态
+        if (!isLoggedIn) {
+            alert("Please log in to use the search function.");
+            window.location.href = "login.jsp";
+            return false; // 阻止表单提交
+        }
+        return true;
+    }
+</script>
 
 </body>
 </html>

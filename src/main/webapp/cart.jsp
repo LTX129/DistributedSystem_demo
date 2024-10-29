@@ -59,7 +59,7 @@
             text-align: right;
             margin-top: 20px;
         }
-        .btn-checkout {
+        .btn-checkout, .btn-continue-shopping {
             background-color: #e2231a;
             color: white;
             padding: 10px 20px;
@@ -70,8 +70,11 @@
             margin-top: 20px;
             float: right;
         }
-        .btn-checkout:hover {
+        .btn-checkout:hover, .btn-continue-shopping:hover {
             background-color: #c81e14;
+        }
+        .btn-continue-shopping {
+            margin-top: 10px;
         }
         .empty-cart {
             text-align: center;
@@ -155,6 +158,8 @@
     <form action="CheckoutServlet" method="post">
         <button class="btn-checkout">Proceed to Checkout</button>
     </form>
+
+    <a href="index.jsp" class="btn-continue-shopping">Continue Shopping</a>
 
     <%
     } else {
