@@ -5,6 +5,11 @@ import jakarta.servlet.http.*;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
+
+import javax.mail.*;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
 
 import model.User;
 import model.UserDAO;
@@ -22,6 +27,10 @@ public class UserServlet extends HttpServlet {
             handleRegister(request, response);
         } else if ("login".equals(action)) {
             handleLogin(request, response);
+        } else if ("forgotPassword".equals(action)) {
+            handleForgotPassword(request, response);
+        }else if ("resetPassword".equals(action)) {
+            handleResetPassword(request, response);
         }
     }
 
@@ -115,4 +124,95 @@ public class UserServlet extends HttpServlet {
         RequestDispatcher dispatcher = request.getRequestDispatcher("register.jsp");
         dispatcher.forward(request, response);
     }
+
+    // 处理忘记密码请求
+    private void handleForgotPassword(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String email = request.getParameter("email");
+
+        try {
+            UserDAO userDAO = new UserDAO();
+            User user = userDAO.getUserByEmail(email);
+
+            if (user != null) {
+                // 发送重置链接到用户的电子邮件
+                sendResetLink(email);
+                request.setAttribute("message", "A reset link has been sent to your email address.");
+            } else {
+                request.setAttribute("message", "No account found with that email address.");
+            }
+
+            RequestDispatcher dispatcher = request.getRequestDispatcher("forgot_password.jsp");
+            dispatcher.forward(request, response);
+        } catch (Exception e) {
+            e.printStackTrace();
+            request.setAttribute("message", "Failed to send reset link. Please try again.");
+            RequestDispatcher dispatcher = request.getRequestDispatcher("forgot_password.jsp");
+            dispatcher.forward(request, response);
+        }
+    }
+
+    // 处理密码重置
+    private void handleResetPassword(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String email = request.getParameter("email");
+        String newPassword = request.getParameter("newPassword");
+        String confirmPassword = request.getParameter("confirmPassword");
+
+        if (newPassword == null || !newPassword.equals(confirmPassword)) {
+            request.setAttribute("message", "Passwords do not match. Please try again.");
+            RequestDispatcher dispatcher = request.getRequestDispatcher("reset_password.jsp?email=" + email);
+            dispatcher.forward(request, response);
+            return;
+        }
+
+        try {
+            UserDAO userDAO = new UserDAO();
+            userDAO.updatePasswordByEmail(email, newPassword);
+            request.setAttribute("message", "Password reset successful! Please login with your new password.");
+            RequestDispatcher dispatcher = request.getRequestDispatcher("login.jsp");
+            dispatcher.forward(request, response);
+        } catch (Exception e) {
+            e.printStackTrace();
+            request.setAttribute("message", "Failed to reset password. Please try again.");
+            RequestDispatcher dispatcher = request.getRequestDispatcher("reset_password.jsp?email=" + email);
+            dispatcher.forward(request, response);
+        }
+    }
+
+    // 示例发送重置链接的方法
+    private void sendResetLink(String email) {
+        // 配置邮件服务器属性
+        Properties props = new Properties();
+        props.put("mail.smtp.host", "smtp.qq.com"); // SMTP 服务器地址
+        props.put("mail.smtp.port", "587"); // SMTP 端口号
+        props.put("mail.smtp.auth", "true");
+        props.put("mail.smtp.starttls.enable", "true");
+
+        // 身份验证
+        final String username = "3028053662@qq.com";
+        final String password = "sbvijzgjovaldghe";
+
+        Session session = Session.getInstance(props, new Authenticator() {
+            protected PasswordAuthentication getPasswordAuthentication() {
+                return new PasswordAuthentication(username, password);
+            }
+        });
+
+        try {
+            // 创建邮件消息
+            Message message = new MimeMessage(session);
+            message.setFrom(new InternetAddress("3028053662@qq.com"));
+            message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(email));
+            message.setSubject("Password Reset Request");
+            message.setText("Please click the link below to reset your password:\n\n"
+                    + "http://localhost:8080/demo_war/reset_password.jsp?email=" + email);
+
+            // 发送邮件
+            Transport.send(message);
+
+            System.out.println("Reset link sent successfully.");
+        } catch (MessagingException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 }

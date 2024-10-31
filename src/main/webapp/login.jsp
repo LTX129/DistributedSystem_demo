@@ -119,7 +119,7 @@
 
     <!-- 登录选项 -->
     <div class="login-options">
-      <a href="#">忘记密码</a>
+      <a href="forgot_password.jsp">忘记密码</a>
       <a href="register.jsp">立即注册</a>
     </div>
   </div>

@@ -59,6 +59,37 @@ public class UserDAO {
         return user;
     }
 
+    // 获取用户信息通过邮箱
+    public User getUserByEmail(String email) throws Exception {
+        String cacheKey = "user_email_" + email;
+        User user = (User) CacheUtility.get(cacheKey);
+
+        if (user == null) {
+            Connection conn = DBConnection.initializeDatabase();
+            String query = "SELECT * FROM users WHERE email = ?";
+            PreparedStatement pstmt = conn.prepareStatement(query);
+            pstmt.setString(1, email);
+            ResultSet rs = pstmt.executeQuery();
+
+            if (rs.next()) {
+                user = new User();
+                user.setId(rs.getInt("id"));
+                user.setUsername(rs.getString("username"));
+                user.setEmail(rs.getString("email"));
+                user.setRole(rs.getString("role"));
+
+                // 将用户信息存入缓存
+                CacheUtility.put(cacheKey, user);
+            }
+
+            rs.close();
+            pstmt.close();
+            conn.close();
+        }
+
+        return user;
+    }
+
     // 验证用户登录
     public User validateUser(String usernameOrEmail, String password) throws Exception {
         String cacheKey = "user_" + usernameOrEmail;
@@ -119,5 +150,19 @@ public class UserDAO {
         stmt.close();
         conn.close();
         return users;
+    }
+
+    // 根据邮箱更新用户密码
+    public void updatePasswordByEmail(String email, String newPassword) throws Exception {
+        Connection conn = DBConnection.initializeDatabase();
+        String query = "UPDATE users SET password = ? WHERE email = ?";
+        PreparedStatement pstmt = conn.prepareStatement(query);
+        pstmt.setString(1, passwordEncoder.encode(newPassword));  // 加密新密码
+        pstmt.setString(2, email);
+        pstmt.executeUpdate();
+        // 更新成功后清除相关缓存
+        CacheUtility.remove("user_" + email);
+        pstmt.close();
+        conn.close();
     }
 }

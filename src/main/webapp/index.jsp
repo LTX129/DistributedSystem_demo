@@ -159,7 +159,12 @@
         <%
             // 获取所有产品并随机排列
             ProductDAO productDAO = new ProductDAO();
-            List<Product> products = productDAO.getAllProducts();  // 获取所有产品
+            List<Product> products = null;  // 获取所有产品
+            try {
+                products = productDAO.getAllProducts();
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
             if (products != null && !products.isEmpty()) {
                 // 随机打乱产品列表
                 Collections.shuffle(products);
