@@ -14,6 +14,10 @@ import javax.mail.internet.MimeMessage;
 import model.User;
 import model.UserDAO;
 
+import util.AsymmetricEncryptionUtil;
+import java.security.PrivateKey;
+import java.security.PublicKey;
+
 public class UserServlet extends HttpServlet {
 
     private static final Map<String, Integer> loginAttempts = new HashMap<>();
@@ -125,7 +129,7 @@ public class UserServlet extends HttpServlet {
         dispatcher.forward(request, response);
     }
 
-    // 处理忘记密码请求
+    // 示例：使用公钥生成并加密重置链接
     private void handleForgotPassword(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String email = request.getParameter("email");
 
@@ -134,8 +138,13 @@ public class UserServlet extends HttpServlet {
             User user = userDAO.getUserByEmail(email);
 
             if (user != null) {
-                // 发送重置链接到用户的电子邮件
-                sendResetLink(email);
+                // 生成随机 token 并加密
+                String resetToken = java.util.UUID.randomUUID().toString();
+                PublicKey publicKey = AsymmetricEncryptionUtil.loadPublicKey();
+                String encryptedToken = AsymmetricEncryptionUtil.encrypt(resetToken, publicKey);
+
+                // 保存 token 或发送邮件
+                sendResetLink(email, encryptedToken);
                 request.setAttribute("message", "A reset link has been sent to your email address.");
             } else {
                 request.setAttribute("message", "No account found with that email address.");
@@ -154,17 +163,25 @@ public class UserServlet extends HttpServlet {
     // 处理密码重置
     private void handleResetPassword(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String email = request.getParameter("email");
+        String encryptedToken = request.getParameter("token");
         String newPassword = request.getParameter("newPassword");
         String confirmPassword = request.getParameter("confirmPassword");
 
-        if (newPassword == null || !newPassword.equals(confirmPassword)) {
-            request.setAttribute("message", "Passwords do not match. Please try again.");
-            RequestDispatcher dispatcher = request.getRequestDispatcher("reset_password.jsp?email=" + email);
-            dispatcher.forward(request, response);
-            return;
-        }
-
         try {
+            // 使用私钥解密 token
+            PrivateKey privateKey = AsymmetricEncryptionUtil.loadPrivateKey();
+            String decryptedToken = AsymmetricEncryptionUtil.decrypt(encryptedToken, privateKey);
+
+            // 这里可以根据需求进一步验证 token，例如检查是否符合某种格式，是否已过期等
+            System.out.println("Decrypted Token: " + decryptedToken);
+
+            if (newPassword == null || !newPassword.equals(confirmPassword)) {
+                request.setAttribute("message", "Passwords do not match. Please try again.");
+                RequestDispatcher dispatcher = request.getRequestDispatcher("reset_password.jsp?email=" + email);
+                dispatcher.forward(request, response);
+                return;
+            }
+
             UserDAO userDAO = new UserDAO();
             userDAO.updatePasswordByEmail(email, newPassword);
             request.setAttribute("message", "Password reset successful! Please login with your new password.");
@@ -177,9 +194,8 @@ public class UserServlet extends HttpServlet {
             dispatcher.forward(request, response);
         }
     }
-
-    // 示例发送重置链接的方法
-    private void sendResetLink(String email) {
+    // 发送重置链接的方法
+    private void sendResetLink(String email, String encryptedToken) {
         // 配置邮件服务器属性
         Properties props = new Properties();
         props.put("mail.smtp.host", "smtp.qq.com"); // SMTP 服务器地址
@@ -203,8 +219,11 @@ public class UserServlet extends HttpServlet {
             message.setFrom(new InternetAddress("3028053662@qq.com"));
             message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(email));
             message.setSubject("Password Reset Request");
-            message.setText("Please click the link below to reset your password:\n\n"
-                    + "http://localhost:8080/demo_war/reset_password.jsp?email=" + email);
+
+            // 更新的重置链接中包含加密的 token
+            String resetLink = "http://localhost:8080/demo_war/reset_password.jsp?email=" + email + "&token=" + encryptedToken;
+
+            message.setText("Please click the link below to reset your password:\n\n" + resetLink);
 
             // 发送邮件
             Transport.send(message);

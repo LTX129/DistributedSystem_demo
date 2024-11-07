@@ -6,29 +6,52 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
-import util.DBConnection;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+
+import util.AsymmetricEncryptionUtil;
+import java.security.PrivateKey;
+import java.security.PublicKey;
 
 public class UserDAO {
     private BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
-    // 注册新用户
+    // 注册新用户，添加加密后的敏感信息
     public void registerUser(User user) throws Exception {
+        // 在注册用户前，确保密钥已存在
+        ensureKeyPairGenerated();
+
         Connection conn = DBConnection.initializeDatabase();
-        String query = "INSERT INTO users (username, password, email, role) VALUES (?, ?, ?, ?)";
+        String query = "INSERT INTO users (username, password, email, role, encrypted_data) VALUES (?, ?, ?, ?, ?)";
         PreparedStatement pstmt = conn.prepareStatement(query);
+
+        // 使用公钥加密敏感数据
+        PublicKey publicKey = AsymmetricEncryptionUtil.loadPublicKey();
+        String sensitiveData = "Sensitive data like payment details"; // 示例敏感数据
+        String encryptedData = AsymmetricEncryptionUtil.encrypt(sensitiveData, publicKey);
+
         pstmt.setString(1, user.getUsername());
         pstmt.setString(2, passwordEncoder.encode(user.getPassword()));  // 加密密码
         pstmt.setString(3, user.getEmail());
         pstmt.setString(4, user.getRole());
+        pstmt.setString(5, encryptedData);  // 存储加密后的敏感数据
         pstmt.executeUpdate();
+
         // 注册成功后清除相关缓存
         CacheUtility.remove("user_" + user.getUsername());
         pstmt.close();
         conn.close();
     }
 
-    // 获取用户信息通过用户名
+    private void ensureKeyPairGenerated() throws Exception {
+        // 先尝试加载公钥，如果公钥不存在，则生成并存储密钥对
+        try {
+            AsymmetricEncryptionUtil.loadPublicKey();
+        } catch (Exception e) {
+            System.out.println("Public key not found, generating a new key pair.");
+            AsymmetricEncryptionUtil.generateAndStoreKeyPair();
+        }
+    }
+
+    // 获取用户信息通过用户名，并解密敏感数据
     public User getUserByUsername(String username) throws Exception {
         String cacheKey = "user_" + username;
         User user = (User) CacheUtility.get(cacheKey);
@@ -47,6 +70,14 @@ public class UserDAO {
                 user.setEmail(rs.getString("email"));
                 user.setRole(rs.getString("role"));
 
+                // 解密敏感数据
+                String encryptedData = rs.getString("encrypted_data");
+                if (encryptedData != null) {
+                    PrivateKey privateKey = AsymmetricEncryptionUtil.loadPrivateKey();
+                    String decryptedData = AsymmetricEncryptionUtil.decrypt(encryptedData, privateKey);
+                    System.out.println("Decrypted sensitive data: " + decryptedData); // 示例打印解密后的数据
+                }
+
                 // 将用户信息存入缓存
                 CacheUtility.put(cacheKey, user);
             }
@@ -58,7 +89,6 @@ public class UserDAO {
 
         return user;
     }
-
     // 获取用户信息通过邮箱
     public User getUserByEmail(String email) throws Exception {
         String cacheKey = "user_email_" + email;
