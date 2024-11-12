@@ -18,7 +18,7 @@ public class DBConnection {
         try {
             // 加载配置文件
             Properties properties = new Properties();
-            FileInputStream input = new FileInputStream("C:\\Users\\25155\\IdeaProjects\\demo\\src\\main\\database.properties");
+            FileInputStream input = new FileInputStream("C:\\Users\\25155\\IdeaProjects\\DistributedSystem_demo\\src\\main\\database.properties");
             properties.load(input);
 
             // 初始化 HikariCP 数据源配置

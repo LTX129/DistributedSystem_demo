@@ -155,7 +155,7 @@
         </div>
     </form>
 
-    <form action="CheckoutServlet" method="post">
+    <form action="order_confirmation.jsp" method="get">
         <button class="btn-checkout">Proceed to Checkout</button>
     </form>
 

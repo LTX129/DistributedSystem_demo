@@ -46,6 +46,8 @@
 <div class="success-container">
     <h2>Checkout Successful!</h2>
     <p>Thank you for your purchase. Your order has been placed successfully.</p>
+    <p><strong>Shipping Address:</strong> <%= request.getAttribute("shippingAddress") %></p>
+    <p><strong>Payment Method:</strong> <%= request.getAttribute("paymentMethod") %></p>
     <a href="index.jsp" class="btn btn-home">Return to Home Page</a>
 </div>
 

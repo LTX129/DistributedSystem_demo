@@ -221,7 +221,7 @@ public class UserServlet extends HttpServlet {
             message.setSubject("Password Reset Request");
 
             // 更新的重置链接中包含加密的 token
-            String resetLink = "http://localhost:8080/demo_war/reset_password.jsp?email=" + email + "&token=" + encryptedToken;
+            String resetLink = "http://localhost:80/demo_war/reset_password.jsp?email=" + email + "&token=" + encryptedToken;
 
             message.setText("Please click the link below to reset your password:\n\n" + resetLink);
 

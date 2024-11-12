@@ -20,11 +20,31 @@ public class CheckoutServlet extends HttpServlet {
             return;
         }
 
+        // 获取用户提交的订单信息
+        String shippingAddress = request.getParameter("shippingAddress");
+        String paymentMethod = request.getParameter("paymentMethod");
+
+        if (shippingAddress == null || shippingAddress.trim().isEmpty()) {
+            request.setAttribute("message", "Please provide a shipping address.");
+            RequestDispatcher dispatcher = request.getRequestDispatcher("order_confirmation.jsp");
+            dispatcher.forward(request, response);
+            return;
+        }
+
+        if (paymentMethod == null || paymentMethod.trim().isEmpty()) {
+            request.setAttribute("message", "Please select a payment method.");
+            RequestDispatcher dispatcher = request.getRequestDispatcher("order_confirmation.jsp");
+            dispatcher.forward(request, response);
+            return;
+        }
+
         // 模拟结账过程，例如清空购物车和显示成功页面
         session.removeAttribute("cart");  // 清空购物车
 
         // 设置结账成功的消息
         request.setAttribute("message", "Checkout successful! Thank you for your purchase.");
+        request.setAttribute("shippingAddress", shippingAddress);
+        request.setAttribute("paymentMethod", paymentMethod);
 
         // 重定向到结账成功页面
         RequestDispatcher dispatcher = request.getRequestDispatcher("checkout_success.jsp");

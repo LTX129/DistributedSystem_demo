@@ -62,5 +62,15 @@
         <url-pattern>/CheckoutServlet</url-pattern>
     </servlet-mapping>
 
+    <servlet>
+        <servlet-name>OrderServlet</servlet-name>
+        <servlet-class>controller.OrderServlet</servlet-class> <!-- 确保包名和类名正确 -->
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>OrderServlet</servlet-name>
+        <url-pattern>/OrderServlet</url-pattern> <!-- URL 路径 -->
+    </servlet-mapping>
+
 
 </web-app>

@@ -109,7 +109,7 @@
         const password = document.getElementById("password").value;
         const email = document.getElementById("email").value;
 
-        fetch("http://localhost:8080/demo_war/api/users/register", {
+        fetch("http://localhost:80/demo_war/api/users/register", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
