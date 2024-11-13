@@ -100,6 +100,7 @@ public class UserServlet extends HttpServlet {
                 }
                 session = request.getSession(true);
                 session.setAttribute("user", user);
+                session.setAttribute("userId", user.getId()); // 保存用户 ID
                 session.setMaxInactiveInterval(30 * 60); // 设置会话超时时间为 30 分钟
 
                 // 登录成功后重定向到主页或管理员页面

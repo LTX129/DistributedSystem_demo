@@ -3,7 +3,13 @@ package controller;
 import jakarta.servlet.*;
 import jakarta.servlet.http.*;
 import java.io.IOException;
+import java.util.ArrayList;
+
 import model.Cart;
+import model.CartItem;
+import model.Order;
+import model.OrderDAO;
+import model.OrderItem;
 
 public class CheckoutServlet extends HttpServlet {
 
@@ -33,6 +39,39 @@ public class CheckoutServlet extends HttpServlet {
 
         if (paymentMethod == null || paymentMethod.trim().isEmpty()) {
             request.setAttribute("message", "Please select a payment method.");
+            RequestDispatcher dispatcher = request.getRequestDispatcher("order_confirmation.jsp");
+            dispatcher.forward(request, response);
+            return;
+        }
+
+        // 获取用户 ID
+        Integer userId = (Integer) session.getAttribute("userId");
+        if (userId == null) {
+            response.sendRedirect("login.jsp");
+            return;
+        }
+        // 创建新的订单对象
+        Order order = new Order();
+        order.setUserId(userId);
+        order.setShippingAddress(shippingAddress);
+        order.setPaymentMethod(paymentMethod);
+        order.setItems(new ArrayList<>());
+
+        // 将购物车中的商品添加到订单中
+        for (CartItem cartItem : cart.getItems()) {
+            OrderItem orderItem = new OrderItem();
+            orderItem.setProduct(cartItem.getProduct());
+            orderItem.setQuantity(cartItem.getQuantity());
+            order.getItems().add(orderItem);
+        }
+
+        // 保存订单到数据库
+        try {
+            OrderDAO orderDAO = new OrderDAO();
+            orderDAO.saveOrder(order);
+        } catch (Exception e) {
+            e.printStackTrace();
+            request.setAttribute("message", "Failed to place order. Please try again.");
             RequestDispatcher dispatcher = request.getRequestDispatcher("order_confirmation.jsp");
             dispatcher.forward(request, response);
             return;

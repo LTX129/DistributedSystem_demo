@@ -12,15 +12,15 @@ public class OrderServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        HttpSession session = request.getSession();
-
+        HttpSession session = request.getSession(false); // 获取现有会话
         // 检查用户是否已经登录
         Integer userId = (Integer) session.getAttribute("userId");
-        if (userId == null) {
+        if (session == null || session.getAttribute("userId") == null) {
             // 用户未登录，重定向到登录页面
             response.sendRedirect("login.jsp");
             return;
         }
+
 
         // 从数据库获取订单数据
         OrderDAO orderDAO = new OrderDAO();
