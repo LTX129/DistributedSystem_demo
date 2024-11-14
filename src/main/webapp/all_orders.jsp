@@ -81,6 +81,22 @@
                     }
                 }
             %>
+            <!-- all_orders.jsp -->
+            <% for (Order order : orders) { %>
+            <h3>Order ID: <%= order.getOrderId() %></h3>
+            <ul>
+                <% for (OrderItem item : order.getItems()) { %>
+                <li>
+                    Product: <%= item.getProduct().getName() %> - Quantity: <%= item.getQuantity() %>
+                    <form action="CommentServlet" method="get">
+                        <input type="hidden" name="productId" value="<%= item.getProduct().getId() %>">
+                        <input type="hidden" name="userId" value="<%= session.getAttribute("userId") %>">
+                        <button type="submit" class="btn btn-primary">Leave a Comment</button>
+                    </form>
+                </li>
+                <% } %>
+            </ul>
+            <% } %>
             </tbody>
         </table>
     </div>

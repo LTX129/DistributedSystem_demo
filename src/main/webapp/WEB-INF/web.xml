@@ -72,5 +72,25 @@
         <url-pattern>/OrderServlet</url-pattern> <!-- URL 路径 -->
     </servlet-mapping>
 
+    <servlet>
+        <servlet-name>CommentServlet</servlet-name>
+        <servlet-class>controller.CommentServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>CommentServlet</servlet-name>
+        <url-pattern>/CommentServlet</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>ProductServlet</servlet-name>
+        <servlet-class>controller.ProductServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>ProductServlet</servlet-name>
+        <url-pattern>/ProductServlet</url-pattern>
+    </servlet-mapping>
+
 
 </web-app>

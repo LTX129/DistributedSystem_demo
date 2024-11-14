@@ -1,7 +1,27 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page import="model.Product" %>
-<%@ page import="model.ProductDAO" %>
-<% String username = org.apache.commons.text.StringEscapeUtils.escapeHtml4(request.getParameter("username")); %>
+<%@ page import="model.ProductComment" %>
+<%@ page import="java.util.List" %>
+
+<%
+    // 获取请求参数中的商品 ID
+    String productIdStr = request.getParameter("id");
+
+    // 如果没有通过 ProductServlet 加载数据，重定向到 ProductServlet 以加载数据
+    if (request.getAttribute("product") == null) {
+        if (productIdStr != null && !productIdStr.isEmpty()) {
+            response.sendRedirect("ProductServlet?id=" + productIdStr);
+            return; // 确保 JSP 不再继续执行
+        } else {
+            // 没有提供商品 ID，重定向到主页面
+            response.sendRedirect("index.jsp");
+            return; // 确保 JSP 不再继续执行
+        }
+    }
+
+    Product product = (Product) request.getAttribute("product");
+    List<ProductComment> comments = (List<ProductComment>) request.getAttribute("comments");
+%>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -31,34 +51,11 @@
 <div class="container">
     <h2 class="my-4">Product Details</h2>
     <%
-        // 获取请求参数中的商品 ID
-        String productIdStr = request.getParameter("id");
-
-        if (productIdStr == null || productIdStr.isEmpty()) {
-            // 如果没有提供 productId，重定向到产品列表页或显示错误信息
-            response.sendRedirect("index.jsp"); // 或者重定向到主页面/产品列表页面
-            return; // 确保不再继续处理 JSP
-        }
-
-        // 获取请求参数中的商品 ID
-        int productId;
-        try {
-            productId = Integer.parseInt(productIdStr);
-        } catch (NumberFormatException e) {
-            // 如果 productId 不是有效的整数，重定向到产品列表页
-            response.sendRedirect("index.jsp");
-            return;
-        }
-
-        ProductDAO productDAO = new ProductDAO();
-        Product product = productDAO.getProductById(productId);
-
         if (product == null) {
-            // 如果找不到商品，显示友好的错误信息
     %>
     <p>Product not found. Please <a href="index.jsp">return to the main page</a> to continue shopping.</p>
     <%
-            return; // 确保不再继续处理 JSP
+            return;
         }
     %>
     <div class="card mb-4">
@@ -80,6 +77,31 @@
                     </form>
                 </div>
             </div>
+        </div>
+    </div>
+
+    <!-- 商品评论部分 -->
+    <div class="card">
+        <div class="card-body">
+            <h4>Product Reviews</h4>
+            <%
+                if (comments != null && !comments.isEmpty()) {
+                    for (ProductComment comment : comments) {
+            %>
+            <div class="comment mb-3">
+                <p><strong>User ID <%= comment.getUserId() %>:</strong> <%= comment.getComment() %></p>
+                <p>Rating: <%= comment.getRating() %> Stars</p>
+                <p><small>Posted on: <%= comment.getCreatedAt() %></small></p>
+            </div>
+            <hr>
+            <%
+                }
+            } else {
+            %>
+            <p>No reviews yet. Be the first to review this product!</p>
+            <%
+                }
+            %>
         </div>
     </div>
 </div>
