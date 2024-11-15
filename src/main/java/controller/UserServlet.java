@@ -41,7 +41,12 @@ public class UserServlet extends HttpServlet {
     // 处理用户注册
     private void handleRegister(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String username = request.getParameter("username");
-        String password = request.getParameter("password");
+        String password = null;
+        try {
+            password = AsymmetricEncryptionUtil.decrypt(request.getParameter("password"),AsymmetricEncryptionUtil.loadPrivateKey());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
         String email = request.getParameter("email");
         String role = "customer"; // 默认角色为普通用户
 
@@ -87,7 +92,7 @@ public class UserServlet extends HttpServlet {
 
         try {
             UserDAO userDAO = new UserDAO();
-            User user = userDAO.validateUser(usernameOrEmail, password);
+            User user = userDAO.validateUser(usernameOrEmail, AsymmetricEncryptionUtil.decrypt(password, AsymmetricEncryptionUtil.loadPrivateKey()));
 
             if (user != null) {
                 // 登录成功，移除记录
@@ -141,8 +146,9 @@ public class UserServlet extends HttpServlet {
             if (user != null) {
                 // 生成随机 token 并加密
                 String resetToken = java.util.UUID.randomUUID().toString();
-                PublicKey publicKey = AsymmetricEncryptionUtil.loadPublicKey();
-                String encryptedToken = AsymmetricEncryptionUtil.encrypt(resetToken, publicKey);
+                //PublicKey publicKey = AsymmetricEncryptionUtil.loadPublicKey();
+                //String encryptedToken = AsymmetricEncryptionUtil.encrypt(resetToken, publicKey);
+                String encryptedToken = resetToken;
 
                 // 保存 token 或发送邮件
                 sendResetLink(email, encryptedToken);
@@ -166,16 +172,17 @@ public class UserServlet extends HttpServlet {
         String email = request.getParameter("email");
         String encryptedToken = request.getParameter("token");
         String newPassword = request.getParameter("newPassword");
-        String confirmPassword = request.getParameter("confirmPassword");
+        //String confirmPassword = request.getParameter("confirmPassword");
 
         try {
             // 使用私钥解密 token
-            PrivateKey privateKey = AsymmetricEncryptionUtil.loadPrivateKey();
-            String decryptedToken = AsymmetricEncryptionUtil.decrypt(encryptedToken, privateKey);
+            //PrivateKey privateKey = AsymmetricEncryptionUtil.loadPrivateKey();
+            //String decryptedToken = AsymmetricEncryptionUtil.decrypt(encryptedToken, privateKey);
+            String decryptedToken = encryptedToken;
 
             // 这里可以根据需求进一步验证 token，例如检查是否符合某种格式，是否已过期等
             System.out.println("Decrypted Token: " + decryptedToken);
-
+            /*
             if (newPassword == null || !newPassword.equals(confirmPassword)) {
                 request.setAttribute("message", "Passwords do not match. Please try again.");
                 RequestDispatcher dispatcher = request.getRequestDispatcher("reset_password.jsp?email=" + email);
@@ -183,8 +190,10 @@ public class UserServlet extends HttpServlet {
                 return;
             }
 
+             */
+
             UserDAO userDAO = new UserDAO();
-            userDAO.updatePasswordByEmail(email, newPassword);
+            userDAO.updatePasswordByEmail(email, AsymmetricEncryptionUtil.decrypt(newPassword, AsymmetricEncryptionUtil.loadPrivateKey()));
             request.setAttribute("message", "Password reset successful! Please login with your new password.");
             RequestDispatcher dispatcher = request.getRequestDispatcher("login.jsp");
             dispatcher.forward(request, response);
@@ -222,7 +231,7 @@ public class UserServlet extends HttpServlet {
             message.setSubject("Password Reset Request");
 
             // 更新的重置链接中包含加密的 token
-            String resetLink = "http://localhost:80/demo_war/reset_password.jsp?email=" + email + "&token=" + encryptedToken;
+            String resetLink = "/demo_war/reset_password.jsp?email=" + email + "&token=" + encryptedToken;
 
             message.setText("Please click the link below to reset your password:\n\n" + resetLink);
 

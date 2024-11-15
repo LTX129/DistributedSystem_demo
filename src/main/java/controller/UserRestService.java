@@ -5,6 +5,7 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import model.User;
 import model.UserDAO;
+import util.AsymmetricEncryptionUtil;
 import util.SymmetricEncryptionUtil;
 
 import javax.crypto.SecretKey;
@@ -12,7 +13,17 @@ import java.util.List;
 
 @Path("/users")
 public class UserRestService {
-
+    @GET
+    @Path("/publicKey")
+    @Produces(MediaType.TEXT_PLAIN)
+    public String getPublicKey() {
+        try {
+            return AsymmetricEncryptionUtil.getPublicKey(); // 获取公钥并返回
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "Error retrieving public key";
+        }
+    }
     // 用户注册 REST API
     @POST
     @Path("/register")
