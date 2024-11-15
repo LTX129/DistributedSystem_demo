@@ -1,5 +1,6 @@
 package model;
 
+import java.io.IOException;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -10,7 +11,9 @@ public class ProductDAO {
     // 获取所有产品
     public List<Product> getAllProducts() throws Exception {
         Connection conn = DBConnection.initializeDatabase();
-        String query = "SELECT * FROM products";
+        String query = "SELECT products.*, products_img.image " +
+                "FROM products " +
+                "JOIN products_img ON products.id = products_img.id";
         Statement stmt = conn.createStatement();
         ResultSet rs = stmt.executeQuery(query);
 
@@ -22,6 +25,7 @@ public class ProductDAO {
             product.setDescription(rs.getString("description"));
             product.setPrice(rs.getBigDecimal("price"));
             product.setStock(rs.getInt("stock"));
+            product.setImage(rs.getBinaryStream("image"));
             products.add(product);
         }
         rs.close();
@@ -33,7 +37,10 @@ public class ProductDAO {
     // 根据类别获取商品列表
     public List<Product> getProductsByCategory(String category) {
         List<Product> products = new ArrayList<>();
-        String query = "SELECT * FROM products WHERE category = ?";
+        String query = "SELECT p.*, pi.image " +
+                "FROM products p " +
+                "LEFT JOIN products_img pi ON p.id = pi.id " +
+                "WHERE p.category = ?";
 
         try (Connection conn = DBConnection.initializeDatabase();
              PreparedStatement pstmt = conn.prepareStatement(query)) {
@@ -49,6 +56,7 @@ public class ProductDAO {
                 product.setPrice(rs.getBigDecimal("price"));
                 product.setStock(rs.getInt("stock"));
                 product.setCategory(rs.getString("category")); // 添加类别字段
+                product.setImage(rs.getBinaryStream("image"));
                 products.add(product);
             }
         } catch (SQLException e) {
@@ -62,7 +70,10 @@ public class ProductDAO {
     // 根据产品 ID 获取商品详情
     public Product getProductById(int productId) {
         Product product = null;
-        String query = "SELECT * FROM products WHERE id = ?";
+        String query = "SELECT p.*, pi.image " +
+                "FROM products p " +
+                "LEFT JOIN products_img pi ON p.id = pi.id " +
+                "WHERE p.id = ?";
 
         try (Connection conn = DBConnection.initializeDatabase();
              PreparedStatement pstmt = conn.prepareStatement(query)) {
@@ -78,6 +89,7 @@ public class ProductDAO {
                 product.setPrice(rs.getBigDecimal("price"));
                 product.setStock(rs.getInt("stock"));
                 product.setCategory(rs.getString("category")); // 如果有类别字段
+                product.setImage(rs.getBinaryStream("image"));
             }
 
             rs.close();
@@ -90,7 +102,8 @@ public class ProductDAO {
     }
     public List<Product> searchProducts(String query) {
         List<Product> products = new ArrayList<>();
-        String sql = "SELECT * FROM products WHERE name LIKE ? OR description LIKE ?";
+        String sql = "SELECT p.*, pi.image FROM products p LEFT JOIN products_img " +
+                "ON p.id = pi.id WHERE p.name LIKE ? OR p.description LIKE ?";
         try (Connection connection = DBConnection.initializeDatabase();
              PreparedStatement statement = connection.prepareStatement(sql)) {
 
@@ -106,8 +119,11 @@ public class ProductDAO {
                     product.setDescription(resultSet.getString("description"));
                     product.setPrice(resultSet.getBigDecimal("price"));
                     product.setCategory(resultSet.getString("category"));
+                    product.setImage(resultSet.getBinaryStream("image"));
                     products.add(product);
                 }
+            } catch (IOException e) {
+                throw new RuntimeException(e);
             }
         } catch (SQLException e) {
             e.printStackTrace();

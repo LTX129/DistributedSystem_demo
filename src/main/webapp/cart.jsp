@@ -129,7 +129,7 @@
                         totalPrice += itemTotal;
                 %>
                 <tr>
-                    <td><img src="https://via.placeholder.com/80" alt="<%= item.getProduct().getName() %>"></td>
+                    <td><img src="img/product_<%=item.getProduct().getId()%>.jpeg" alt="<%= item.getProduct().getName() %>"></td>
                     <td><%= item.getProduct().getName() %></td>
                     <td>$<%= String.format("%.2f", item.getProduct().getPrice()) %></td>
                     <td>

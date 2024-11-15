@@ -1,0 +1,76 @@
+<web-app xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd"
+         version="4.0">
+
+    <!-- UserServlet 映射 -->
+    <servlet>
+        <servlet-name>UserServlet</servlet-name>
+        <servlet-class>controller.UserServlet</servlet-class> <!-- 确保包名和类名正确 -->
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>UserServlet</servlet-name>
+        <url-pattern>/UserServlet</url-pattern> <!-- URL 路径 -->
+    </servlet-mapping>
+
+    <!-- CartServlet 映射 -->
+    <servlet>
+        <servlet-name>CartServlet</servlet-name>
+        <servlet-class>controller.CartServlet</servlet-class> <!-- 确保包名和类名正确 -->
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>CartServlet</servlet-name>
+        <url-pattern>/CartServlet</url-pattern> <!-- URL 路径 -->
+    </servlet-mapping>
+
+    <!-- RESTful 服务映射 -->
+    <servlet>
+        <servlet-name>jersey-servlet</servlet-name>
+        <servlet-class>org.glassfish.jersey.servlet.ServletContainer</servlet-class>
+        <init-param>
+            <param-name>jersey.config.server.provider.packages</param-name>
+            <param-value>controller</param-value>
+        </init-param>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>jersey-servlet</servlet-name>
+        <url-pattern>/api/*</url-pattern> <!-- RESTful 服务访问路径 -->
+    </servlet-mapping>
+
+    <!-- SOAP Web Service 配置 -->
+    <servlet>
+        <servlet-name>UserSOAPService</servlet-name>
+        <servlet-class>controller.UserSOAPService</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>UserSOAPService</servlet-name>
+        <url-pattern>/UserSOAPService</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>CheckoutServlet</servlet-name>
+        <servlet-class>controller.CheckoutServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>CheckoutServlet</servlet-name>
+        <url-pattern>/CheckoutServlet</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>OrderServlet</servlet-name>
+        <servlet-class>controller.OrderServlet</servlet-class> <!-- 确保包名和类名正确 -->
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>OrderServlet</servlet-name>
+        <url-pattern>/OrderServlet</url-pattern> <!-- URL 路径 -->
+    </servlet-mapping>
+
+
+</web-app>

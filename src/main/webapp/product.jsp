@@ -61,7 +61,7 @@
     <div class="card mb-4">
         <div class="row g-0">
             <div class="col-md-4">
-                <img src="https://via.placeholder.com/150" class="img-fluid rounded-start" alt="<%= product.getName() %>">
+                <img src="img/product_<%=product.getId()%>.jpeg">
             </div>
             <div class="col-md-8">
                 <div class="card-body">

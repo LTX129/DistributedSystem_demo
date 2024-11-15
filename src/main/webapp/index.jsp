@@ -189,10 +189,13 @@
                 for (Product product : products) {
         %>
         <div class="product">
-            <img src="https://via.placeholder.com/150" alt="<%= product.getName() %>">
+            <!-- 动态加载商品图片 -->
+            <img src="img/product_<%=product.getId()%>.jpeg">
+
             <h5><%= product.getName() %></h5>
             <p><%= product.getDescription() %></p>
             <p><strong>Price: $<%= product.getPrice() %></strong></p>
+
             <%
                 if (isLoggedIn) {
             %>
