@@ -1,8 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page import="java.util.List, java.util.Collections" %>
 <%@ page import="model.Product, model.ProductDAO" %>
-<a href="OrderServlet" class="btn btn-secondary" style="margin-right: 20px;">All Orders</a>
-
 <%
     model.User user = (model.User) session.getAttribute("user");  // 获取用户信息
     boolean isLoggedIn = (user != null);  // 检查用户是否已登录
@@ -42,6 +40,10 @@
         header .logo img {
             width: 50px;
             margin-right: 10px;
+        }
+        header .logo a {
+            color: white;
+            text-decoration: none;
         }
         header .search-bar {
             width: 40%;
@@ -115,13 +117,21 @@
             text-align: center;
             margin-top: 20px;
         }
+        .button-group {
+            margin-bottom: 20px;
+        }
+        .button-group .btn {
+            margin-right: 10px;
+        }
     </style>
 </head>
 <body>
 
 <header>
     <div class="logo">
-        <img src="https://www.jd.com/favicon.ico" alt="logo"> 京东
+        <a href="index.jsp">
+            <img src="https://www.jd.com/favicon.ico" alt="logo"> 京东
+        </a>
     </div>
     <div class="search-bar">
         <form id="searchForm" action="search.jsp" method="get" onsubmit="return checkLogin()">
@@ -154,25 +164,13 @@
     </ul>
 </nav>
 
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <div class="container-fluid">
-        <a class="navbar-brand" href="index.jsp">Shopping Platform</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav ms-auto">
-                <li class="nav-item">
-                    <a class="nav-link" href="cart.jsp">
-                        <button class="btn btn-outline-success">Cart</button>
-                    </a>
-                </li>
-            </ul>
-        </div>
-    </div>
-</nav>
-
 <div class="container">
+    <!-- 添加“All Orders”和“Cart”按钮 -->
+    <div class="button-group text-center">
+        <a href="OrderServlet" class="btn btn-secondary">All Orders</a>
+        <a href="cart.jsp" class="btn btn-outline-success" onclick="return checkLoginForCart();">Cart</a>
+    </div>
+
     <h2 class="my-4 text-center">All Products</h2>
     <div class="product-grid">
         <%
@@ -191,10 +189,13 @@
                 for (Product product : products) {
         %>
         <div class="product">
-            <img src="https://via.placeholder.com/150" alt="<%= product.getName() %>">
+            <!-- 动态加载商品图片 -->
+            <img src="img/product_<%=product.getId()%>.jpeg">
+
             <h5><%= product.getName() %></h5>
             <p><%= product.getDescription() %></p>
             <p><strong>Price: $<%= product.getPrice() %></strong></p>
+
             <%
                 if (isLoggedIn) {
             %>
@@ -231,6 +232,16 @@
             alert("Please log in to use the search function.");
             window.location.href = "login.jsp";
             return false; // 阻止表单提交
+        }
+        return true;
+    }
+
+    function checkLoginForCart() {
+        const isLoggedIn = <%= isLoggedIn %>;  // 获取用户登录状态
+        if (!isLoggedIn) {
+            alert("Please log in to view your cart.");
+            window.location.href = "login.jsp";
+            return false; // 阻止导航到cart页面
         }
         return true;
     }

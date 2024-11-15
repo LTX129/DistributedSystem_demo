@@ -81,7 +81,6 @@ public class CartServlet extends HttpServlet {
         Product product = new Product();
         product.setId(productId);
         product.setName("Sample Product");
-        product.setPrice(new BigDecimal("19.99"));
         return product;
     }
 }

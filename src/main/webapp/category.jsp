@@ -43,6 +43,10 @@
             width: 50px;
             margin-right: 10px;
         }
+        header .logo a {
+            color: white;
+            text-decoration: none;
+        }
         header .search-bar {
             width: 40%;
             display: flex;
@@ -121,7 +125,9 @@
 
 <header>
     <div class="logo">
-        <img src="https://www.jd.com/favicon.ico" alt="logo"> 京东
+        <a href="index.jsp">
+            <img src="https://www.jd.com/favicon.ico" alt="logo"> 京东
+        </a>
     </div>
     <div class="search-bar">
         <form id="searchForm" action="search.jsp" method="get" onsubmit="return checkLogin()">
@@ -165,7 +171,7 @@
                 for (Product product : products) {
         %>
         <div class="product">
-            <img src="https://via.placeholder.com/150" alt="<%= product.getName() %>">
+            <img src="img/product_<%=product.getId()%>.jpeg">
             <h5><%= product.getName() %></h5>
             <p><%= product.getDescription() %></p>
             <p><strong>Price: $<%= product.getPrice() %></strong></p>
