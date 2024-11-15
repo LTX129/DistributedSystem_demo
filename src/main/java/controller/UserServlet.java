@@ -37,13 +37,12 @@ public class UserServlet extends HttpServlet {
             handleResetPassword(request, response);
         }
     }
-
     // 处理用户注册
     private void handleRegister(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String username = request.getParameter("username");
         String password = null;
         try {
-            password = AsymmetricEncryptionUtil.decrypt(request.getParameter("password"),AsymmetricEncryptionUtil.loadPrivateKey());
+            password = AsymmetricEncryptionUtil.decrypt(request.getParameter("password"), AsymmetricEncryptionUtil.loadPrivateKey());
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -58,6 +57,25 @@ public class UserServlet extends HttpServlet {
             return;
         }
 
+        UserDAO userDAO = new UserDAO();
+
+        // 检查邮箱是否已被注册
+        try {
+            User existingUser = userDAO.getUserByEmail(email);
+            if (existingUser != null) {
+                request.setAttribute("message", "The email address is already registered. Please use another email.");
+                RequestDispatcher dispatcher = request.getRequestDispatcher("register.jsp");
+                dispatcher.forward(request, response);
+                return;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            request.setAttribute("message", "Error while checking email uniqueness. Please try again.");
+            RequestDispatcher dispatcher = request.getRequestDispatcher("register.jsp");
+            dispatcher.forward(request, response);
+            return;
+        }
+
         User newUser = new User();
         newUser.setUsername(username);
         newUser.setPassword(password);
@@ -65,7 +83,6 @@ public class UserServlet extends HttpServlet {
         newUser.setRole(role);
 
         try {
-            UserDAO userDAO = new UserDAO();
             userDAO.registerUser(newUser);
             response.sendRedirect("register_success.jsp"); // 注册成功后跳转到 register_success.jsp
         } catch (Exception e) {
@@ -75,7 +92,6 @@ public class UserServlet extends HttpServlet {
             dispatcher.forward(request, response);
         }
     }
-
     // 处理用户登录
     private void handleLogin(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String usernameOrEmail = request.getParameter("username");

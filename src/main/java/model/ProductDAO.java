@@ -102,8 +102,7 @@ public class ProductDAO {
     }
     public List<Product> searchProducts(String query) {
         List<Product> products = new ArrayList<>();
-        String sql = "SELECT p.*, pi.image FROM products p LEFT JOIN products_img " +
-                "ON p.id = pi.id WHERE p.name LIKE ? OR p.description LIKE ?";
+        String sql = "SELECT * FROM products WHERE name LIKE ? OR description LIKE ?";
         try (Connection connection = DBConnection.initializeDatabase();
              PreparedStatement statement = connection.prepareStatement(sql)) {
 
@@ -119,15 +118,17 @@ public class ProductDAO {
                     product.setDescription(resultSet.getString("description"));
                     product.setPrice(resultSet.getBigDecimal("price"));
                     product.setCategory(resultSet.getString("category"));
-                    product.setImage(resultSet.getBinaryStream("image"));
                     products.add(product);
                 }
-            } catch (IOException e) {
-                throw new RuntimeException(e);
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
+
+        if (products.isEmpty()) {
+            System.out.println("No products found for search query: " + query);
+        }
+
         return products;
     }
 }

@@ -128,7 +128,9 @@
 
 <header>
   <div class="logo">
-    <img src="https://www.jd.com/favicon.ico" alt="logo"> 京东
+    <a href="index.jsp">
+      <img src="https://www.jd.com/favicon.ico" alt="logo"> 京东
+    </a>
   </div>
   <div class="search-bar">
     <form id="searchForm" action="search.jsp" method="get" onsubmit="return checkLogin()">

@@ -65,6 +65,12 @@
 
 <div class="register-container">
     <h2>Register</h2>
+    <% String message = (String) request.getAttribute("message"); %>
+    <% if (message != null) { %>
+    <div class="alert alert-danger" role="alert">
+        <%= message %>
+    </div>
+    <% } %>
     <form id="registerForm" action="UserServlet" method="post">
         <!-- 用户名输入框 -->
         <div class="mb-3">

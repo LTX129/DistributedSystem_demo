@@ -3,11 +3,9 @@ package util;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.Properties;
 
 public class DBConnection {
 
@@ -16,19 +14,14 @@ public class DBConnection {
 
     static {
         try {
-            // 加载配置文件
-            Properties properties = new Properties();
-            FileInputStream input = new FileInputStream("D:\\A课程文件\\大四\\DS\\pj\\src\\main\\database.properties");
-            properties.load(input);
-
             // 初始化 HikariCP 数据源配置
             HikariConfig config = new HikariConfig();
-            config.setDriverClassName(properties.getProperty("DriverClassName"));
-            config.setJdbcUrl(properties.getProperty("JdbcUrl"));
-            config.setUsername(properties.getProperty("Username"));
-            config.setPassword(properties.getProperty("Password"));
-            config.setMaximumPoolSize(Integer.parseInt(properties.getProperty("MaximumPoolSize")));
-            config.setMinimumIdle(Integer.parseInt(properties.getProperty("MinimumIdle")));
+            config.setDriverClassName("com.mysql.cj.jdbc.Driver");
+            config.setJdbcUrl("jdbc:mysql://localhost:3306/ds_database?serverTimezone=UTC&useUnicode=true&characterEncoding=utf-8&useSSL=false");
+            config.setUsername("root");
+            config.setPassword("123456");
+            config.setMaximumPoolSize(60);
+            config.setMinimumIdle(20);
 
             // 创建 HikariDataSource 实例
             dataSource = new HikariDataSource(config);
@@ -36,10 +29,6 @@ public class DBConnection {
             if (debug) {
                 System.out.println("DBConnection: HikariCP DataSource initialized");
             }
-        } catch (IOException e) {
-            System.err.println("DBConnection Error: Unable to load properties file");
-            e.printStackTrace();
-            throw new RuntimeException("Failed to load database properties file", e);
         } catch (Exception e) {
             System.err.println("DBConnection Error: Failed to initialize HikariCP DataSource");
             e.printStackTrace();
@@ -68,6 +57,33 @@ public class DBConnection {
             dataSource.close();
             if (debug) {
                 System.out.println("DBConnection: HikariCP DataSource closed");
+            }
+        }
+    }
+
+    /**
+     * 清除加密密钥
+     */
+    private static void clearEncryptionKeys() {
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        try {
+            conn = initializeDatabase();
+            String deleteQuery = "DELETE FROM encryption_keys";
+            pstmt = conn.prepareStatement(deleteQuery);
+            pstmt.executeUpdate();
+            if (debug) {
+                System.out.println("DBConnection: Encryption keys cleared from encryption_keys table");
+            }
+        } catch (SQLException e) {
+            System.err.println("DBConnection Error: Failed to clear encryption keys");
+            e.printStackTrace();
+        } finally {
+            try {
+                if (pstmt != null) pstmt.close();
+                if (conn != null) conn.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
             }
         }
     }
