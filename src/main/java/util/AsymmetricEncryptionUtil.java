@@ -120,5 +120,11 @@ public class AsymmetricEncryptionUtil {
         byte[] decryptedBytes = cipher.doFinal(decodedBytes);
         return new String(decryptedBytes);
     }
+
+    //获取字符串公钥用于提供给客户端
+    public static String getPublicKey() throws Exception {
+        PublicKey publicKey = loadPublicKey();
+        return Base64.getEncoder().encodeToString(publicKey.getEncoded());
+    }
 }
 

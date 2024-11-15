@@ -103,7 +103,7 @@
   <!-- 登录表单 -->
   <div class="login-form">
     <h3>密码登录</h3>
-    <form action="UserServlet" method="post">
+    <form action="UserServlet" method="post" id="loginForm">
       <input type="hidden" name="action" value="login">
       <label for="username">账号名/邮箱</label>
       <input type="text" id="username" name="username" placeholder="请输入账号名或邮箱" required>
@@ -134,6 +134,37 @@
 
 <!-- 引入 Bootstrap JS 库 -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jsencrypt/bin/jsencrypt.min.js"></script>
+<script>
+  // 获取公钥并进行加密
+  async function encryptPassword() {
+    // 获取公钥
+    const response = await fetch('/demo_war/api/users/publicKey');
+    const publicKeyBase64 = await response.text();
+    console.log(publicKeyBase64);
+    // 初始化 JSEncrypt 对象
+    const encrypt = new JSEncrypt();
+    encrypt.setPublicKey('-----BEGIN PUBLIC KEY-----\n' + publicKeyBase64 + '\n-----END PUBLIC KEY-----');
+
+    // 获取密码并加密
+    const password = document.getElementById('password').value;
+    const encryptedPassword = encrypt.encrypt(password);
+
+    if (encryptedPassword) {
+      // 将加密后的密码设置到表单中，并提交
+      document.getElementById('password').value = encryptedPassword;
+      document.getElementById('loginForm').submit();
+    } else {
+      alert("密码加密失败");
+    }
+  }
+
+  // 在提交表单前加密密码
+  document.getElementById('loginForm').addEventListener('submit', function(event) {
+    event.preventDefault();
+    encryptPassword();
+  });
+</script>
 
 </body>
 </html>

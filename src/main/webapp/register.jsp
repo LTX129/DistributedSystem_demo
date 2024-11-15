@@ -100,41 +100,37 @@
 
 <!-- 引入 Bootstrap JS 库 -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
-
+<script src="https://cdn.jsdelivr.net/npm/jsencrypt/bin/jsencrypt.min.js"></script>
 <script>
-    document.getElementById("registerForm").addEventListener("submit", function (event) {
-        event.preventDefault(); // 阻止表单的默认提交行为
+    // 加密密码的函数
+    async function encryptPassword() {
+        // 获取公钥
+        const response = await fetch('/demo_war/api/users/publicKey');
+        const publicKeyBase64 = await response.text();
 
-        const username = document.getElementById("username").value;
-        const password = document.getElementById("password").value;
-        const email = document.getElementById("email").value;
+        // 初始化 JSEncrypt 对象
+        const encrypt = new JSEncrypt();
+        encrypt.setPublicKey('-----BEGIN PUBLIC KEY-----\n' + publicKeyBase64 + '\n-----END PUBLIC KEY-----');
 
-        fetch("http://localhost:80/demo_war/api/users/register", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                username: username,
-                password: password,
-                email: email,
-                role: "customer"
-            })
-        })
-            .then(response => response.text())  // 改为 text()
-            .then(data => {
-                if (data && data.includes("successfully")) {
-                    window.location.href = "register_success.jsp";
-                } else {
-                    alert("Registration failed! Please try again.");
-                }
-            })
-            .catch(error => {
-                console.error("Error:", error);
-                alert("An error occurred. Please try again.");
-            });
+        // 获取密码并加密
+        const password = document.getElementById('password').value;
+        const encryptedPassword = encrypt.encrypt(password);
+
+        if (encryptedPassword) {
+            // 将加密后的密码设置到表单中，并提交
+            document.getElementById('password').value = encryptedPassword;
+            document.getElementById('registerForm').submit();
+        } else {
+            alert("密码加密失败");
+        }
+    }
+
+    // 在提交表单前加密密码
+    document.getElementById('registerForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+        encryptPassword();
     });
-
 </script>
+
 </body>
 </html>
