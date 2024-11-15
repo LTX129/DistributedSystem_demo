@@ -43,6 +43,10 @@
             width: 50px;
             margin-right: 10px;
         }
+        header .logo a {
+            color: white;
+            text-decoration: none;
+        }
         header .search-bar {
             width: 40%;
             display: flex;
@@ -121,7 +125,9 @@
 
 <header>
     <div class="logo">
-        <img src="https://www.jd.com/favicon.ico" alt="logo"> 京东
+        <a href="index.jsp">
+            <img src="https://www.jd.com/favicon.ico" alt="logo"> 京东
+        </a>
     </div>
     <div class="search-bar">
         <form id="searchForm" action="search.jsp" method="get" onsubmit="return checkLogin()">
