@@ -141,6 +141,7 @@ public class UserDAO {
                     user.setUsername(rs.getString("username"));
                     user.setEmail(rs.getString("email"));
                     user.setRole(rs.getString("role"));
+                    user.setPassword(rs.getString("password"));
 
                     // 将用户信息存入缓存
                     CacheUtility.put(cacheKey, user);

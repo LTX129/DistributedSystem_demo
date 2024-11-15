@@ -137,7 +137,7 @@
                     </td>
                     <td>$<%= String.format("%.2f", itemTotal) %></td>
                     <td class="cart-actions">
-                        <a href="CartServlet?action=remove&productId=<%= item.getProduct().getId() %>">Remove</a>
+                        <a href="CartServlet?action=remove&productId=<%= item.getProduct().getId() %>" class="btn btn-danger">Remove</a>
                     </td>
                 </tr>
                 <%

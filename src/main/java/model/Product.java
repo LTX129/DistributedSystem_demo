@@ -54,32 +54,6 @@ public class Product {
     public void setStock(int stock) {
         this.stock = stock;
     }
-    public Product getProductById(int id) {
-        Product product = null;
-        String query = "SELECT * FROM products WHERE id = ?";
-
-        try (Connection conn = DBConnection.initializeDatabase();
-             PreparedStatement pstmt = conn.prepareStatement(query)) {
-
-            pstmt.setInt(1, id);
-            ResultSet rs = pstmt.executeQuery();
-
-            if (rs.next()) {
-                product = new Product();
-                product.setId(rs.getInt("id"));
-                product.setName(rs.getString("name"));
-                product.setDescription(rs.getString("description"));
-                product.setPrice(rs.getBigDecimal("price"));
-                product.setStock(rs.getInt("stock"));
-                product.setCategory(rs.getString("category"));
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-        return product;
-    }
 
     public String getCategory() {
         return category;
