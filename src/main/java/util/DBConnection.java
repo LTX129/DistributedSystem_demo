@@ -54,6 +54,10 @@ public class DBConnection {
      */
     public static void closeDataSource() {
         if (dataSource != null) {
+            // 调用 clearEncryptionKeys() 清除密钥
+            clearEncryptionKeys();
+
+            // 关闭数据源
             dataSource.close();
             if (debug) {
                 System.out.println("DBConnection: HikariCP DataSource closed");
@@ -64,7 +68,7 @@ public class DBConnection {
     /**
      * 清除加密密钥
      */
-    private static void clearEncryptionKeys() {
+     public static void clearEncryptionKeys() {
         Connection conn = null;
         PreparedStatement pstmt = null;
         try {
