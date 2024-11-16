@@ -4,7 +4,6 @@ import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 
 import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 public class DBConnection {
@@ -66,29 +65,13 @@ public class DBConnection {
     }
 
     /**
-     * 清除加密密钥
+     * 清除加密密钥（从缓存中删除）
      */
-     public static void clearEncryptionKeys() {
-        Connection conn = null;
-        PreparedStatement pstmt = null;
-        try {
-            conn = initializeDatabase();
-            String deleteQuery = "DELETE FROM encryption_keys";
-            pstmt = conn.prepareStatement(deleteQuery);
-            pstmt.executeUpdate();
-            if (debug) {
-                System.out.println("DBConnection: Encryption keys cleared from encryption_keys table");
-            }
-        } catch (SQLException e) {
-            System.err.println("DBConnection Error: Failed to clear encryption keys");
-            e.printStackTrace();
-        } finally {
-            try {
-                if (pstmt != null) pstmt.close();
-                if (conn != null) conn.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
+    public static void clearEncryptionKeys() {
+        CacheUtility.remove("public_key");
+        CacheUtility.remove("private_key");
+        if (debug) {
+            System.out.println("DBConnection: Encryption keys cleared from cache");
         }
     }
 

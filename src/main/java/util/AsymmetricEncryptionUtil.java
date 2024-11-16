@@ -8,100 +8,60 @@ import java.security.PublicKey;
 import java.security.spec.X509EncodedKeySpec;
 import java.security.spec.PKCS8EncodedKeySpec;
 import javax.crypto.Cipher;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.util.Base64;
 
 public class AsymmetricEncryptionUtil {
     private static final String ALGORITHM = "RSA";
 
-    // Generate an RSA key pair and save to the database
-    public static void generateAndStoreKeyPair() throws Exception {
-        Connection conn = null;
-        PreparedStatement pstmt = null;
-
+    // Ensure keys are available (generate if not already cached)
+    static {
         try {
+            generateAndStoreKeyPair();
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException("Failed to generate RSA key pair", e);
+        }
+    }
+
+    // Generate an RSA key pair and store in the cache if not already available
+    public static void generateAndStoreKeyPair() throws Exception {
+        KeyPair keyPair = getKeyPairFromCache();
+
+        if (keyPair == null) {
             KeyPairGenerator keyGen = KeyPairGenerator.getInstance(ALGORITHM);
             keyGen.initialize(2048);
-            KeyPair keyPair = keyGen.generateKeyPair();
+            keyPair = keyGen.generateKeyPair();
 
-            PublicKey publicKey = keyPair.getPublic();
-            PrivateKey privateKey = keyPair.getPrivate();
+            // Store keys in the cache
+            CacheUtility.put("public_key", keyPair.getPublic());
+            CacheUtility.put("private_key", keyPair.getPrivate());
 
-            // Store keys in the database
-            conn = DBConnection.initializeDatabase();
-            String deleteQuery = "DELETE FROM encryption_keys WHERE key_name IN (?, ?)";
-            pstmt = conn.prepareStatement(deleteQuery);
-            pstmt.setString(1, "public_key");
-            pstmt.setString(2, "private_key");
-            pstmt.executeUpdate();
-            pstmt.close();
-
-            storeKey(conn, "public_key", Base64.getEncoder().encodeToString(publicKey.getEncoded()));
-            storeKey(conn, "private_key", Base64.getEncoder().encodeToString(privateKey.getEncoded()));
-        } finally {
-            if (pstmt != null) pstmt.close();
-            if (conn != null) conn.close();
+            System.out.println("AsymmetricEncryptionUtil: New key pair generated and stored in cache");
+        } else {
+            System.out.println("AsymmetricEncryptionUtil: Using existing key pair from cache");
         }
     }
 
-    // Store key in the database
-    private static void storeKey(Connection conn, String keyName, String keyValue) throws Exception {
-        String query = "INSERT INTO encryption_keys (key_name, key_value) VALUES (?, ?)";
-        try (PreparedStatement pstmt = conn.prepareStatement(query)) {
-            pstmt.setString(1, keyName);
-            pstmt.setString(2, keyValue);
-            pstmt.executeUpdate();
-        }
-    }
-
-    // Load a public key from the database
+    // Load a public key from the cache
     public static PublicKey loadPublicKey() throws Exception {
-        String keyValue = loadKey("public_key");
-        if (keyValue == null) {
-            throw new Exception("Public key not found in the database. Make sure keys are generated and stored properly.");
+        PublicKey publicKey = (PublicKey) CacheUtility.get("public_key");
+        if (publicKey == null) {
+            // Generate key pair if not found in cache
+            generateAndStoreKeyPair();
+            publicKey = (PublicKey) CacheUtility.get("public_key");
         }
-        byte[] keyBytes = Base64.getDecoder().decode(keyValue);
-        X509EncodedKeySpec spec = new X509EncodedKeySpec(keyBytes);
-        KeyFactory keyFactory = KeyFactory.getInstance(ALGORITHM);
-        return keyFactory.generatePublic(spec);
+        return publicKey;
     }
 
-    // Load a private key from the database
+    // Load a private key from the cache
     public static PrivateKey loadPrivateKey() throws Exception {
-        String keyValue = loadKey("private_key");
-        if (keyValue == null) {
-            throw new Exception("Private key not found in the database. Make sure keys are generated and stored properly.");
+        PrivateKey privateKey = (PrivateKey) CacheUtility.get("private_key");
+        if (privateKey == null) {
+            // Generate key pair if not found in cache
+            generateAndStoreKeyPair();
+            privateKey = (PrivateKey) CacheUtility.get("private_key");
         }
-        byte[] keyBytes = Base64.getDecoder().decode(keyValue);
-        PKCS8EncodedKeySpec spec = new PKCS8EncodedKeySpec(keyBytes);
-        KeyFactory keyFactory = KeyFactory.getInstance(ALGORITHM);
-        return keyFactory.generatePrivate(spec);
-    }
-
-    // Load key from the database
-    private static String loadKey(String keyName) throws Exception {
-        Connection conn = null;
-        PreparedStatement pstmt = null;
-        ResultSet rs = null;
-        try {
-            conn = DBConnection.initializeDatabase();
-            String query = "SELECT key_value FROM encryption_keys WHERE key_name = ?";
-            pstmt = conn.prepareStatement(query);
-            pstmt.setString(1, keyName);
-            rs = pstmt.executeQuery();
-
-            if (rs.next()) {
-                return rs.getString("key_value");
-            } else {
-                return null;
-            }
-        } finally {
-            if (rs != null) rs.close();
-            if (pstmt != null) pstmt.close();
-            if (conn != null) conn.close();
-        }
+        return privateKey;
     }
 
     // Encrypt data using the public key
@@ -121,10 +81,20 @@ public class AsymmetricEncryptionUtil {
         return new String(decryptedBytes);
     }
 
-    //获取字符串公钥用于提供给客户端
+    // Helper method to get the key pair from cache
+    private static KeyPair getKeyPairFromCache() {
+        PublicKey publicKey = (PublicKey) CacheUtility.get("public_key");
+        PrivateKey privateKey = (PrivateKey) CacheUtility.get("private_key");
+
+        if (publicKey != null && privateKey != null) {
+            return new KeyPair(publicKey, privateKey);
+        }
+        return null;
+    }
+
+    // 获取字符串公钥用于提供给客户端
     public static String getPublicKey() throws Exception {
         PublicKey publicKey = loadPublicKey();
         return Base64.getEncoder().encodeToString(publicKey.getEncoded());
     }
 }
-

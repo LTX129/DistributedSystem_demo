@@ -16,8 +16,12 @@ public class ApplicationLifecycleListener implements ServletContextListener {
     public void contextDestroyed(ServletContextEvent sce) {
         System.out.println("Application shutting down: Cleaning up resources...");
 
-        // 在应用程序关闭时清除密钥并关闭数据源
-        DBConnection.clearEncryptionKeys(); // 确保将这个方法改为 public
+        // 清除缓存中的密钥
+        CacheUtility.remove("public_key");
+        CacheUtility.remove("private_key");
+        System.out.println("ApplicationLifecycleListener: Encryption keys removed from cache");
+
+        // 关闭数据源
         DBConnection.closeDataSource();
     }
 }

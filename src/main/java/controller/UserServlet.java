@@ -4,6 +4,7 @@ import jakarta.servlet.*;
 import jakarta.servlet.http.*;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
@@ -11,8 +12,7 @@ import javax.mail.*;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
-import model.User;
-import model.UserDAO;
+import model.*;
 
 import util.AsymmetricEncryptionUtil;
 import java.security.PrivateKey;
@@ -124,6 +124,14 @@ public class UserServlet extends HttpServlet {
                 session.setAttribute("userId", user.getId()); // 保存用户 ID
                 session.setMaxInactiveInterval(30 * 60); // 设置会话超时时间为 30 分钟
 
+                // 从数据库加载购物车
+                CartDAO cartDAO = new CartDAO();
+                List<CartItem> cartItems = cartDAO.getCartItemsByUserId(user.getId());
+                Cart cart = new Cart();
+                for (CartItem item : cartItems) {
+                    cart.addItem(item);
+                }
+                session.setAttribute("cart", cart);
                 // 登录成功后重定向到主页或管理员页面
                 if ("admin".equals(user.getRole())) {
                     response.sendRedirect("admin.jsp"); // 管理员跳转到管理员页面
