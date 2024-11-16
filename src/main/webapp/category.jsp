@@ -13,7 +13,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Online Shopping Platform - <%= category %></title>
+    <title>Online Shopping Platform</title>
     <!-- 引入 FontAwesome 图标库 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <!-- 引入 Bootstrap CSS 库 -->
@@ -21,183 +21,187 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f4f4;
+            background-color: #f8f9fa;
         }
         header {
             background-color: #e2231a;
             color: white;
             padding: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-        header .logo {
-            display: flex;
-            align-items: center;
-            font-size: 1.5em;
-            font-weight: bold;
         }
         header .logo img {
             width: 50px;
-            margin-right: 10px;
         }
-        header .logo a {
-            color: white;
+        header a {
             text-decoration: none;
-        }
-        header .search-bar {
-            width: 40%;
-            display: flex;
-            align-items: center;
-        }
-        header .search-bar input {
-            width: 100%;
-            padding: 10px;
-            border: none;
-            border-radius: 4px 0 0 4px;
-        }
-        header .search-bar button {
-            padding: 10px;
-            background-color: white;
-            color: #e2231a;
-            border: none;
-            border-radius: 0 4px 4px 0;
-        }
-        nav {
-            background-color: #f5f5f5;
-            padding: 10px;
-        }
-        nav ul {
-            list-style: none;
-            display: flex;
-            justify-content: center;
-            padding: 0;
-            margin: 0;
-        }
-        nav ul li {
-            margin: 0 15px;
-        }
-        nav ul li a {
-            text-decoration: none;
-            color: #333;
             font-weight: bold;
         }
-        nav ul li a:hover {
-            color: #e2231a;
-        }
-        .product-grid {
-            margin: 20px 0;
-            display: flex;
-            flex-wrap: wrap;
-            gap: 20px;
-            justify-content: center;
-        }
-        .product {
+        header .btn-login {
+            color: #fff;
+            margin-left: 10px;
+            font-size: 0.9rem;
+            padding: 5px 10px;
+            border-radius: 20px;
             background-color: #fff;
-            padding: 20px;
-            text-align: center;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            flex: 1;
-            max-width: 300px;
+            color: #e2231a;
+            text-decoration: none;
+            transition: all 0.3s ease-in-out;
         }
-        .product img {
+        header .btn-login:hover {
+            background-color: #c91a15;
+            color: #fff;
+        }
+        .search-bar {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            max-width: 600px;
             width: 100%;
-            height: auto;
-            margin-bottom: 10px;
         }
-        .product h5 {
-            font-size: 1.2em;
-            color: #333;
+        .search-bar input {
+            flex: 1;
+            border-radius: 20px 0 0 20px;
+            border: 1px solid #ddd;
+            padding: 10px;
+            height: 40px;
+            box-sizing: border-box;
+        }
+        .search-bar button {
+            border-radius: 0 20px 20px 0;
+            padding: 0 20px;
+            height: 40px;
+            border: none;
+            background-color: #fff;
+            color: #e2231a;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
+        }
+        .search-bar button:hover {
+            background-color: #f0f0f0;
+            color: #c91a15;
+        }
+        .category-buttons .btn {
+            font-size: 0.9rem;
+            margin: 5px;
+            font-weight: bold;
+            color: #e2231a;
+            background-color: #fff;
+            border: 1px solid #e2231a;
+            border-radius: 20px;
+            transition: all 0.3s ease-in-out;
+        }
+        .category-buttons .btn:hover {
+            background-color: #e2231a;
+            color: #fff;
         }
         footer {
-            background-color: #333;
-            color: #fff;
+            background: #333;
+            color: white;
             padding: 20px;
             text-align: center;
-            margin-top: 20px;
+            font-size: 0.875rem;
+        }
+        #backToTop {
+            display: none;
+            position: fixed;
+            bottom: 40px;
+            right: 40px;
+            background-color: #e2231a;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            font-size: 1.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+            cursor: pointer;
+            transition: opacity 0.3s, transform 0.3s;
+        }
+        #backToTop:hover {
+            background-color: #c91a15;
+            transform: scale(1.1);
+        }
+        .product {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        .product img {
+            max-height: 200px;
+            object-fit: cover;
         }
     </style>
 </head>
 <body>
-
-<header>
-    <div class="logo">
-        <a href="index.jsp">
-            <img src="https://www.jd.com/favicon.ico" alt="logo"> 京东
+<header class="d-flex justify-content-between align-items-center">
+    <div class="logo d-flex align-items-center">
+        <a href="index.jsp" class="d-flex align-items-center">
+            <img src="https://www.jd.com/favicon.ico" alt="logo">
+            <span style="color: #ffffff; font-weight: bold; margin-left: 10px;">G13 Shopping</span>
         </a>
     </div>
-    <div class="search-bar">
-        <form id="searchForm" action="search.jsp" method="get" onsubmit="return checkLogin()">
-            <input type="text" name="query" id="searchQuery" placeholder="Search for products" required>
-            <button type="submit" id="searchButton"><i class="fas fa-search"></i></button>
-        </form>
+    <div class="d-flex align-items-center">
+        <div class="search-bar me-3">
+            <form id="searchForm" action="search.jsp" method="get" onsubmit="return checkLogin();">
+                <input type="text" name="query" id="searchQuery" placeholder="Search for products" required>
+                <button type="submit"><i class="fas fa-search"></i></button>
+            </form>
+        </div>
+        <div class="category-buttons d-flex">
+            <a href="category.jsp?category=Electronics" class="btn">Electronics</a>
+            <a href="category.jsp?category=Fashion" class="btn">Fashion</a>
+            <a href="category.jsp?category=Appliances" class="btn">Appliances</a>
+            <a href="category.jsp?category=Books" class="btn">Books</a>
+        </div>
     </div>
-    <div>
-        <%
-            if (isLoggedIn) {  // 如果用户已登录
-        %>
-        <span class="text-white">Hello, <%= user.getUsername() %>!</span>
-        <a href="logout.jsp" class="text-white">Logout</a>
-        <%
-        } else {  // 如果用户未登录
-        %>
-        <a href="login.jsp" class="text-white">Login</a> / <a href="register.jsp" class="text-white">Register</a>
-        <%
-            }
-        %>
+    <div class="d-flex align-items-center">
+        <% if (isLoggedIn) { %>
+        <span class="me-2">Hello, <%= user.getUsername() %>!</span>
+        <a href="logout.jsp" class="btn-login">Logout</a>
+        <% } else { %>
+        <a href="login.jsp" class="btn-login">Login</a>
+        <a href="register.jsp" class="btn-login">Register</a>
+        <% } %>
     </div>
 </header>
 
-<nav>
-    <ul>
-        <li><a href="category.jsp?category=Electronics">Electronics</a></li>
-        <li><a href="category.jsp?category=Fashion">Fashion</a></li>
-        <li><a href="category.jsp?category=Appliances">Appliances</a></li>
-        <li><a href="category.jsp?category=Books">Books</a></li>
-    </ul>
-</nav>
+<div class="category-bar my-3 d-flex justify-content-between align-items-center">
+    <div class="title-container text-center flex-grow-1">
+        <h2><strong style="font-size: 2.5rem; color: #e2231a;"><%= category %> Products</strong></h2>
+    </div>
+    <div class="action-buttons d-flex justify-content-end">
+        <a href="OrderServlet" class="btn btn-secondary me-2">All Orders</a>
+        <a href="cart.jsp" class="btn btn-outline-success" onclick="return checkLoginForCart();">Cart</a>
+    </div>
+</div>
 
-<div class="container">
-    <h2 class="my-4 text-center"><%= category %> Products</h2>
-    <div class="product-grid">
+
+<div class="container my-4">
+    <div class="row">
         <%
-            // 获取所有该类别的产品
             ProductDAO productDAO = new ProductDAO();
-            List<Product> products = productDAO.getProductsByCategory(category);  // 根据类别获取产品
+            List<Product> products = productDAO.getProductsByCategory(category); // 根据类别获取产品
             if (products != null && !products.isEmpty()) {
                 for (Product product : products) {
         %>
-        <div class="product">
-            <img src="img/product_<%=product.getId()%>.jpeg">
-            <h5><%= product.getName() %></h5>
-            <p><%= product.getDescription() %></p>
-            <p><strong>Price: $<%= product.getPrice() %></strong></p>
-            <%
-                if (isLoggedIn) {
-            %>
-            <a href="product.jsp?id=<%= product.getId() %>" class="btn btn-primary">View Details</a>
-            <%
-            } else {
-            %>
-            <a href="login.jsp" class="btn btn-primary">View Details</a>
-            <%
-                }
-            %>
+        <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+            <div class="product bg-white p-3 rounded shadow-sm h-100 d-flex flex-column justify-content-between">
+                <img src="img/product_<%= product.getId() %>.jpeg" class="img-fluid mb-3" alt="<%= product.getName() %>">
+                <h5 class="text-dark"><%= product.getName() %></h5>
+                <p class="description text-muted"><%= product.getDescription() %></p>
+                <p class="fw-bold">Price: $<%= product.getPrice() %></p>
+                <a href="<%= isLoggedIn ? "product.jsp?id=" + product.getId() : "login.jsp" %>" class="btn btn-primary mt-3">View Details</a>
+            </div>
         </div>
         <%
             }
         } else {
         %>
-        <p>No products available in this category. Please check back later.</p>
+        <p class="text-center">No products available in this category. Please check back later.</p>
         <%
             }
         %>
-    </div>
-    <div class="text-center mt-4">
-        <a href="index.jsp" class="btn btn-secondary">Return to All Products</a>
     </div>
 </div>
 
@@ -205,19 +209,42 @@
     <p>京东 © 2024 All Rights Reserved</p>
 </footer>
 
-<!-- 引入 Bootstrap JS 库 -->
+<!-- 返回顶部按钮 -->
+<button id="backToTop" title="Back to Top"><i class="fas fa-arrow-up"></i></button>
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
+    const backToTopButton = document.getElementById("backToTop");
+
+    window.onscroll = function() {
+        if (document.body.scrollTop > 200 || document.documentElement.scrollTop > 200) {
+            backToTopButton.style.display = "block";
+        } else {
+            backToTopButton.style.display = "none";
+        }
+    };
+
+    backToTopButton.onclick = function() {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+
     function checkLogin() {
-        const isLoggedIn = <%= isLoggedIn %>;  // 获取用户登录状态
-        if (!isLoggedIn) {
+        if (!<%= isLoggedIn %>) {
             alert("Please log in to use the search function.");
             window.location.href = "login.jsp";
-            return false; // 阻止表单提交
+            return false;
+        }
+        return true;
+    }
+
+    function checkLoginForCart() {
+        if (!<%= isLoggedIn %>) {
+            alert("Please log in to view your cart.");
+            window.location.href = "login.jsp";
+            return false;
         }
         return true;
     }
 </script>
-
 </body>
 </html>

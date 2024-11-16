@@ -6,7 +6,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Forgot Password - Online Shopping Platform</title>
-    <!-- 引入 Bootstrap CSS 库 -->
+    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
@@ -56,16 +56,16 @@
 <body>
 
 <div class="forgot-password-container">
-    <h3>重置密码</h3>
+    <h3>Forgot Password</h3>
     <form action="UserServlet" method="post">
         <input type="hidden" name="action" value="forgotPassword">
-        <label for="email">请输入您的注册邮箱</label>
-        <input type="email" id="email" name="email" placeholder="请输入注册邮箱" required>
-        <input type="submit" value="发送重置链接">
+        <label for="email">Enter your registered email address</label>
+        <input type="email" id="email" name="email" placeholder="Enter your registered email" required>
+        <input type="submit" value="Send Reset Link">
     </form>
 </div>
 
-<!-- 引入 Bootstrap JS 库 -->
+<!-- Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>
