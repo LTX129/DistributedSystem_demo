@@ -7,7 +7,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Login - Online Shopping Platform</title>
-  <!-- 引入 Bootstrap CSS 库 -->
+  <!-- Bootstrap CSS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <style>
     body {
@@ -100,66 +100,66 @@
 <body>
 
 <div class="login-container">
-  <!-- 登录表单 -->
+  <!-- Login Form -->
   <div class="login-form">
-    <h3>密码登录</h3>
+    <h3>Password Login</h3>
     <form action="UserServlet" method="post" id="loginForm">
       <input type="hidden" name="action" value="login">
-      <label for="username">账号名/邮箱</label>
-      <input type="text" id="username" name="username" placeholder="请输入账号名或邮箱" required>
+      <label for="username">Username/Email</label>
+      <input type="text" id="username" name="username" placeholder="Enter your username or email" required>
 
-      <label for="password">密码</label>
-      <input type="password" id="password" name="password" placeholder="请输入密码" required>
+      <label for="password">Password</label>
+      <input type="password" id="password" name="password" placeholder="Enter your password" required>
 
-      <input type="submit" value="登录">
+      <input type="submit" value="Login">
     </form>
 
-    <!-- 登录状态提示 -->
+    <!-- Login Status Message -->
     <p class="text-center text-danger">${message}</p>
 
-    <!-- 登录选项 -->
+    <!-- Login Options -->
     <div class="login-options">
-      <a href="forgot_password.jsp">忘记密码</a>
-      <a href="register.jsp">立即注册</a>
+      <a href="forgot_password.jsp">Forgot Password?</a>
+      <a href="register.jsp">Register Now</a>
     </div>
   </div>
 
-  <!-- 二维码登录 -->
+  <!-- QR Code Login -->
   <div class="qr-login">
-    <h3>手机扫码安全登录</h3>
+    <h3>Scan QR Code for Secure Login</h3>
     <img src="https://via.placeholder.com/180" alt="QR Code">
-    <p>打开 <a href="#">手机京东</a> 扫描二维码</p>
+    <p>Open <a href="#">JD App</a> and scan the QR code</p>
   </div>
 </div>
 
-<!-- 引入 Bootstrap JS 库 -->
+<!-- Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/jsencrypt/bin/jsencrypt.min.js"></script>
 <script>
-  // 获取公钥并进行加密
+  // Get public key and encrypt password
   async function encryptPassword() {
-    // 获取公钥
+    // Get public key
     const response = await fetch('/demo_war/api/users/publicKey');
     const publicKeyBase64 = await response.text();
     console.log(publicKeyBase64);
-    // 初始化 JSEncrypt 对象
+    // Initialize JSEncrypt object
     const encrypt = new JSEncrypt();
     encrypt.setPublicKey('-----BEGIN PUBLIC KEY-----\n' + publicKeyBase64 + '\n-----END PUBLIC KEY-----');
 
-    // 获取密码并加密
+    // Get password and encrypt it
     const password = document.getElementById('password').value;
     const encryptedPassword = encrypt.encrypt(password);
 
     if (encryptedPassword) {
-      // 将加密后的密码设置到表单中，并提交
+      // Set encrypted password to form and submit
       document.getElementById('password').value = encryptedPassword;
       document.getElementById('loginForm').submit();
     } else {
-      alert("密码加密失败");
+      alert("Password encryption failed");
     }
   }
 
-  // 在提交表单前加密密码
+  // Encrypt password before form submission
   document.getElementById('loginForm').addEventListener('submit', function(event) {
     event.preventDefault();
     encryptPassword();
