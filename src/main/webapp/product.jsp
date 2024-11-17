@@ -304,10 +304,25 @@
 <!-- 引入 Bootstrap JS 库 -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
+    // 检查登录状态
     function checkLogin() {
-        alert("Please log in to use the search function.");
-        window.location.href = "login.jsp";
-        return false; // 阻止表单提交
+        var isLoggedIn = <%= isLoggedIn %>;
+        if (!isLoggedIn) {
+            alert("Please log in to use the search function.");
+            window.location.href = "login.jsp";
+            return false; // 阻止表单提交
+        }
+        return true;
+    }
+
+    function checkLoginForCart() {
+        var isLoggedIn = <%= isLoggedIn %>;
+        if (!isLoggedIn) {
+            alert("Please log in to view your cart.");
+            window.location.href = "login.jsp";
+            return false; // 阻止导航到cart页面
+        }
+        return true;
     }
 </script>
 

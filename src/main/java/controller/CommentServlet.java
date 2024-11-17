@@ -3,7 +3,7 @@ package controller;
 import jakarta.servlet.*;
 import jakarta.servlet.http.*;
 import model.ProductComment;
-import model.ProductCommentDAO;
+import DAO.ProductCommentDAO;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -24,26 +24,35 @@ public class CommentServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        int productId = Integer.parseInt(request.getParameter("productId"));
-        int userId = Integer.parseInt(request.getParameter("userId"));
-        String commentText = request.getParameter("comment");
-        int rating = Integer.parseInt(request.getParameter("rating"));
-
-        ProductComment comment = new ProductComment();
-        comment.setProductId(productId);
-        comment.setUserId(userId);
-        comment.setComment(commentText);
-        comment.setRating(rating);
-
-        ProductCommentDAO commentDAO = new ProductCommentDAO();
         try {
-            commentDAO.saveComment(comment);
-            response.sendRedirect("ProductServlet?id=" + productId);
-        } catch (SQLException e) {
+            String productIdStr = request.getParameter("productId");
+            String userIdStr = request.getParameter("userId");
+
+            if (productIdStr == null || userIdStr == null) {
+                throw new IllegalArgumentException("Product ID or User ID is missing.");
+            }
+
+            int productId = Integer.parseInt(productIdStr);
+            int userId = Integer.parseInt(userIdStr);
+            String comment = request.getParameter("comment");
+            int rating = Integer.parseInt(request.getParameter("rating"));
+
+            ProductComment productComment = new ProductComment();
+            productComment.setProductId(productId);
+            productComment.setUserId(userId);
+            productComment.setComment(comment);
+            productComment.setRating(rating);
+
+            ProductCommentDAO commentDAO = new ProductCommentDAO();
+            commentDAO.saveComment(productComment);
+
+            response.sendRedirect("product.jsp?id=" + productId);
+        } catch (NumberFormatException e) {
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid Product ID or User ID");
             e.printStackTrace();
-            request.setAttribute("message", "Failed to submit comment. Please try again.");
-            RequestDispatcher dispatcher = request.getRequestDispatcher("comment.jsp");
-            dispatcher.forward(request, response);
+        } catch (Exception e) {
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "An error occurred while processing the comment");
+            e.printStackTrace();
         }
     }
 }

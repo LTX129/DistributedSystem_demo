@@ -3,8 +3,7 @@ package controller;
 import jakarta.jws.WebMethod;
 import jakarta.jws.WebService;
 import model.User;
-import model.UserDAO;
-import jakarta.servlet.*;
+import DAO.UserDAO;
 import jakarta.servlet.http.*;
 
 @WebService(serviceName = "UserSOAPService")

@@ -15,8 +15,8 @@
   <h2>Leave a Review</h2>
   <form action="CommentServlet" method="post">
     <!-- Get Product ID and User ID from request parameters -->
-    <input type="hidden" name="productId" value="<%= request.getAttribute("productId") %>">
-    <input type="hidden" name="userId" value="<%= request.getAttribute("userId") %>">
+    <input type="hidden" name="productId" value="<%= request.getParameter("productId") != null ? request.getParameter("productId") : "" %>">
+    <input type="hidden" name="userId" value="<%= request.getParameter("userId") != null ? request.getParameter("userId") : "" %>">
 
     <!-- Comment Text -->
     <div class="mb-3">

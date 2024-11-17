@@ -1,5 +1,7 @@
 package controller;
 
+import DAO.CartDAO;
+import DAO.UserDAO;
 import jakarta.servlet.*;
 import jakarta.servlet.http.*;
 import java.io.IOException;
@@ -15,8 +17,6 @@ import javax.mail.internet.MimeMessage;
 import model.*;
 
 import util.AsymmetricEncryptionUtil;
-import java.security.PrivateKey;
-import java.security.PublicKey;
 
 public class UserServlet extends HttpServlet {
 

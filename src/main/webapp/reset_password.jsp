@@ -1,6 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page import="java.io.PrintWriter" %>
-<%@ page import="model.User, model.UserDAO" %>
+<%@ page import="model.User, DAO.UserDAO" %>
 <%
     String email = request.getParameter("email");
     if (email == null || email.isEmpty()) {

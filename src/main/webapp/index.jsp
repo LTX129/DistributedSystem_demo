@@ -1,6 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page import="java.util.List, java.util.Collections" %>
-<%@ page import="model.Product, model.ProductDAO" %>
+<%@ page import="model.Product, DAO.ProductDAO" %>
 
 <%
     model.User user = (model.User) session.getAttribute("user");  // 获取用户信息

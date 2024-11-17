@@ -4,7 +4,7 @@ import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import model.User;
-import model.UserDAO;
+import DAO.UserDAO;
 import util.AsymmetricEncryptionUtil;
 import util.SymmetricEncryptionUtil;
 

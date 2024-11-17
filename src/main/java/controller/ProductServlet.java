@@ -6,8 +6,8 @@ import java.io.IOException;
 import java.util.List;
 import model.Product;
 import model.ProductComment;
-import model.ProductCommentDAO;
-import model.ProductDAO;
+import DAO.ProductCommentDAO;
+import DAO.ProductDAO;
 
 public class ProductServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import model.Cart;
 import model.CartItem;
 import model.Order;
-import model.OrderDAO;
+import DAO.OrderDAO;
 import model.OrderItem;
 
 public class CheckoutServlet extends HttpServlet {

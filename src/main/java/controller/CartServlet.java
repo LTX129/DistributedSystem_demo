@@ -1,10 +1,10 @@
 package controller;
 
-import model.CartDAO;
+import DAO.CartDAO;
 import model.Cart;
 import model.CartItem;
 import model.Product;
-import model.ProductDAO;
+import DAO.ProductDAO;
 
 import jakarta.servlet.*;
 import jakarta.servlet.http.*;
