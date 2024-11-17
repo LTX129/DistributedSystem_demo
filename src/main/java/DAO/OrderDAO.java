@@ -1,5 +1,8 @@
-package model;
+package DAO;
 
+import model.Order;
+import model.OrderItem;
+import model.Product;
 import util.DBConnection;
 
 import java.sql.*;

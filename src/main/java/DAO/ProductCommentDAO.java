@@ -1,5 +1,6 @@
-package model;
+package DAO;
 
+import model.ProductComment;
 import util.DBConnection;
 
 import java.sql.SQLException;

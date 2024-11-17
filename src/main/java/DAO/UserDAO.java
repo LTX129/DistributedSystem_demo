@@ -1,4 +1,5 @@
-package model;
+package DAO;
+import model.User;
 import util.CacheUtility;
 import util.DBConnection;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -6,10 +7,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
-
-
-import java.security.PrivateKey;
-import java.security.PublicKey;
 
 public class UserDAO {
     private BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();

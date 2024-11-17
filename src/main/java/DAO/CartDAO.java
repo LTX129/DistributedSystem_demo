@@ -1,6 +1,7 @@
-package model;
+package DAO;
 
 import model.CartItem;
+import model.Product;
 import util.DBConnection;
 
 import java.sql.Connection;

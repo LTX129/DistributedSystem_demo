@@ -1,9 +1,10 @@
-package model;
+package DAO;
 
-import java.io.IOException;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+
+import model.Product;
 import util.DBConnection;
 
 public class ProductDAO {
