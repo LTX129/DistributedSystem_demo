@@ -144,7 +144,7 @@
   <div class="logo d-flex align-items-center">
     <a href="index.jsp" class="d-flex align-items-center">
       <img src="https://www.jd.com/favicon.ico" alt="logo">
-      <span style="color: #ffffff; font-weight: bold; margin-left: 10px;">G13 Shopping</span>
+      <span style="color: #ffffff; font-weight: bold; margin-left: 10px;">G3 Shopping</span>
     </a>
   </div>
   <div class="d-flex align-items-center">
@@ -216,12 +216,11 @@
 </div>
 
 <footer>
-  <p>京东 © 2024 All Rights Reserved</p>
+  <p>G3 Shopping © 2024 All Rights Reserved</p>
 </footer>
 
-<button class="back-to-top" onclick="window.scrollTo({ top: 0, behavior: 'smooth' });">
-  <i class="fas fa-chevron-up"></i>
-</button>
+<!-- 返回顶部按钮 -->
+<button id="backToTop" title="Back to Top"><i class="fas fa-arrow-up"></i></button>
 
 <!-- 引入 Bootstrap JS 库 -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
@@ -236,14 +235,19 @@
     return true;
   }
 
-  window.addEventListener('scroll', function() {
-    const backToTopButton = document.querySelector('.back-to-top');
-    if (window.scrollY > 300) {
-      backToTopButton.style.display = 'block';
+  const backToTopButton = document.getElementById("backToTop");
+
+  window.onscroll = function() {
+    if (document.body.scrollTop > 200 || document.documentElement.scrollTop > 200) {
+      backToTopButton.style.display = "block";
     } else {
-      backToTopButton.style.display = 'none';
+      backToTopButton.style.display = "none";
     }
-  });
+  };
+
+  backToTopButton.onclick = function() {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 </script>
 
 </body>

@@ -138,7 +138,7 @@
     <div class="logo d-flex align-items-center">
         <a href="index.jsp" class="d-flex align-items-center">
             <img src="https://www.jd.com/favicon.ico" alt="logo">
-            <span style="color: #ffffff; font-weight: bold; margin-left: 10px;">G13 Shopping</span>
+            <span style="color: #ffffff; font-weight: bold; margin-left: 10px;">G3 Shopping</span>
         </a>
     </div>
     <div class="d-flex align-items-center">
@@ -206,7 +206,7 @@
 </div>
 
 <footer>
-    <p>京东 © 2024 All Rights Reserved</p>
+    <p>G3 Shopping © 2024 All Rights Reserved</p>
 </footer>
 
 <!-- 返回顶部按钮 -->

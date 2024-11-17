@@ -98,7 +98,7 @@
     <div class="logo">
         <a href="index.jsp">
             <img src="https://www.jd.com/favicon.ico" alt="logo">
-            <span style="color: #ffffff; font-weight: bold; margin-left: 10px;">G13 Shopping</span>
+            <span style="color: #ffffff; font-weight: bold; margin-left: 10px;">G3 Shopping</span>
         </a>
     </div>
     <div class="search-bar">
@@ -186,7 +186,7 @@
 </div>
 
 <footer>
-    <p>JD Shopping © 2024 All Rights Reserved</p>
+    <p>G3 Shopping © 2024 All Rights Reserved</p>
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
