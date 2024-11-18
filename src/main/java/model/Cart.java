@@ -34,12 +34,4 @@ public class Cart {
         return items;
     }
 
-    // 计算购物车总价
-    public double getTotalPrice() {
-        double total = 0;
-        for (CartItem item : items) {
-            total += item.getTotalPrice().doubleValue();
-        }
-        return total;
-    }
 }
