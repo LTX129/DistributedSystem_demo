@@ -2,6 +2,7 @@
 <%@ page import="java.util.Date" %>
 <%@ page import="model.Product" %>
 <%@ page import="DAO.ImgDAO" %>
+<%@ page import="java.util.Base64" %>
 
 <%
   String productId = request.getParameter("productId");
