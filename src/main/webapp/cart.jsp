@@ -91,6 +91,13 @@
             text-align: center;
             padding: 15px;
         }
+        .text-end {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 10px; /* 按钮间距 */
+        }
+
     </style>
 </head>
 <body>
@@ -174,12 +181,13 @@
             <strong>Total Price: $<%= String.format("%.2f", totalPrice) %></strong>
         </div>
     </div>
-    <div class="text-end mt-3">
+    <div class="d-flex justify-content-end mt-3 align-items-center gap-2">
         <form action="CheckoutServlet" method="post">
             <button type="submit" class="btn btn-success">Proceed to Checkout</button>
         </form>
         <a href="index.jsp" class="btn btn-secondary">Continue Shopping</a>
     </div>
+
     <% } else { %>
     <div class="empty-cart text-center">
         <p>Your cart is empty. <a href="index.jsp">Continue Shopping</a></p>
