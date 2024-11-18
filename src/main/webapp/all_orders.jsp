@@ -198,7 +198,9 @@
                 <td><%= order.getShippingAddress() %></td>
                 <td><%= order.getPaymentMethod() %></td>
                 <td>
-                    <a href="comment.jsp?productId=<%= item.getProduct().getId() %>&userId=<%= user.getId() %>" class="btn btn-primary">Leave a Review</a>
+                    <a href="comment.jsp?productId=<%= item.getProduct().getId() %>&userId=<%= user.getId() %>&productName=<%= item.getProduct().getName() %>&purchaseDate=<%= order.getOrderDate() %>&price=<%= item.getProduct().getPrice() %>"
+                       class="btn btn-primary">Leave a Review</a>
+
                 </td>
             </tr>
             <%

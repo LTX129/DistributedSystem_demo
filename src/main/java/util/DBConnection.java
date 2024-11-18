@@ -20,7 +20,7 @@ public class DBConnection {
             primaryConfig.setDriverClassName("com.mysql.cj.jdbc.Driver");
             primaryConfig.setJdbcUrl("jdbc:mysql://localhost:3306/ds_database?serverTimezone=UTC&useUnicode=true&characterEncoding=utf-8&useSSL=false");
             primaryConfig.setUsername("root");
-            primaryConfig.setPassword("123456");
+            primaryConfig.setPassword("Lzm200376");
             primaryConfig.setMaximumPoolSize(60);
             primaryConfig.setMinimumIdle(20);
 

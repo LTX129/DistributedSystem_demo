@@ -4,36 +4,31 @@
 <%@ page import="java.util.List" %>
 
 <%
-    // 获取请求参数中的商品 ID
     String productIdStr = request.getParameter("id");
 
-    // 如果没有通过 ProductServlet 加载数据，重定向到 ProductServlet 以加载数据
     if (request.getAttribute("product") == null) {
         if (productIdStr != null && !productIdStr.isEmpty()) {
             response.sendRedirect("ProductServlet?id=" + productIdStr);
-            return; // 确保 JSP 不再继续执行
+            return;
         } else {
-            // 没有提供商品 ID，重定向到主页面
             response.sendRedirect("index.jsp");
-            return; // 确保 JSP 不再继续执行
+            return;
         }
     }
 
     Product product = (Product) request.getAttribute("product");
     List<ProductComment> comments = (List<ProductComment>) request.getAttribute("comments");
-    model.User user = (model.User) session.getAttribute("user");  // 获取用户信息
-    boolean isLoggedIn = (user != null);  // 检查用户是否已登录
+    model.User user = (model.User) session.getAttribute("user");
+    boolean isLoggedIn = (user != null);
 %>
 
 <!DOCTYPE html>
 <html lang="en">
-<head><head>
+<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Online Shopping Platform</title>
-    <!-- 引入 FontAwesome 图标库 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    <!-- 引入 Bootstrap CSS 库 -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
@@ -67,13 +62,12 @@
             background-color: #c91a15;
             color: #fff;
         }
-        header .search-bar {
+        .search-bar {
             display: flex;
             align-items: center;
             justify-content: center;
-            width: 100%;
             max-width: 600px;
-            margin: 0 auto;
+            width: 100%;
         }
         .search-bar input {
             flex: 1;
@@ -112,92 +106,48 @@
             background-color: #e2231a;
             color: #fff;
         }
-
-        .product {
-            background: #fff;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            padding: 20px;
-            text-align: center;
-            transition: transform 0.3s;
-            min-height: 400px;
-            max-height: 400px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-        }
-        .product:hover {
-            transform: translateY(-10px);
-        }
-        .product img {
-            max-width: 100%;
-            max-height: 180px;
-            margin-bottom: 10px;
-            object-fit: cover;
-        }
-        .product h5 {
-            font-size: 1.1rem;
-            color: #333;
-            margin-bottom: 5px;
-            max-height: 40px;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
-        }
-        .product .description {
-            font-size: 0.9rem;
-            color: #666;
-            margin-bottom: 15px;
-            max-height: 50px;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
-        }
-        .product .btn {
-            margin-top: auto;
-        }
-        .title-container {
-            text-align: center;
-            position: relative;
-            margin-bottom: 30px;
-        }
-        .title-container h2 {
-            font-size: 2.5rem;
-            font-weight: bold;
-            color: #e2231a;
-            text-transform: uppercase;
-            display: inline-block;
-            position: relative;
-            padding: 10px 30px;
-            background: linear-gradient(90deg, #f8f9fa, #fff);
-            border-radius: 8px;
-        }
-        .title-container h2::before,
-        .title-container h2::after {
-            content: '';
-            position: absolute;
-            height: 3px;
-            width: 80px;
-            background: linear-gradient(90deg, #e2231a, #c91a15);
-            top: 50%;
-            transform: translateY(-50%);
-        }
-        .title-container h2::before {
-            left: -90px;
-        }
-        .title-container h2::after {
-            right: -90px;
-        }
         footer {
             background: #333;
             color: white;
             padding: 20px;
             text-align: center;
             font-size: 0.875rem;
+        }
+        #backToTop {
+            display: none;
+            position: fixed;
+            bottom: 40px;
+            right: 40px;
+            background-color: #e2231a;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            font-size: 1.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+            cursor: pointer;
+            transition: opacity 0.3s, transform 0.3s;
+        }
+        #backToTop:hover {
+            background-color: #c91a15;
+            transform: scale(1.1);
+        }
+        .product {
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            text-align: center;
+        }
+        .product img {
+            max-width: 100%;
+            max-height: 300px;
+            margin-bottom: 20px;
+            object-fit: cover;
+        }
+        .form-control {
+            border-radius: 5px;
         }
     </style>
 </head>
@@ -236,10 +186,6 @@
 
 <div class="container">
     <h2 class="my-4 text-center">Product Details</h2>
-    <div class="action-buttons d-flex justify-content-end">
-        <a href="OrderServlet" class="btn btn-secondary me-2">All Orders</a>
-        <a href="cart.jsp" class="btn btn-outline-success" onclick="return checkLoginForCart();">Cart</a>
-    </div>
     <%
         if (product == null) {
     %>
@@ -252,19 +198,20 @@
     <div class="card mb-4">
         <div class="row g-0">
             <div class="col-md-4">
-                <img src="img/product_<%=product.getId()%>.jpeg">
+                <img src="img/product_<%= product.getId() %>.jpeg" class="img-fluid" alt="<%= product.getName() %>">
             </div>
             <div class="col-md-8">
-                <div class="card-body text-start">
+                <div class="card-body">
                     <h5 class="card-title"><%= product.getName() %></h5>
                     <p class="card-text"><%= product.getDescription() %></p>
                     <p class="card-text"><strong>Price: $<%= product.getPrice() %></strong></p>
-                    <form action="CartServlet" method="post">
+                    <!-- 表单部分 -->
+                    <form action="CartServlet" method="post" class="d-flex align-items-center mt-3">
                         <input type="hidden" name="action" value="add">
                         <input type="hidden" name="productId" value="<%= product.getId() %>">
-                        <label for="quantity">Quantity:</label>
-                        <input type="number" id="quantity" name="quantity" value="1" min="1">
-                        <button type="submit" class="btn btn-primary mt-3">Add to Cart</button>
+                        <label for="quantity" class="me-2">Quantity:</label>
+                        <input type="number" id="quantity" name="quantity" value="1" min="1" class="form-control me-3" style="width: 100px;">
+                        <button type="submit" class="btn btn-primary">Add to Cart</button>
                     </form>
                 </div>
             </div>
@@ -297,34 +244,27 @@
     </div>
 </div>
 
-<footer>
+<button id="backToTop" title="Back to Top"><i class="fas fa-arrow-up"></i></button>
+<script>
+    const backToTopButton = document.getElementById("backToTop");
+
+    window.onscroll = function() {
+        if (document.body.scrollTop > 200 || document.documentElement.scrollTop > 200) {
+            backToTopButton.style.display = "block";
+        } else {
+            backToTopButton.style.display = "none";
+        }
+    };
+
+    backToTopButton.onclick = function() {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+</script>
+
+<footer class="text-center mt-4">
     <p>G3 Shopping © 2024 All Rights Reserved</p>
 </footer>
 
-<!-- 引入 Bootstrap JS 库 -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
-<script>
-    // 检查登录状态
-    function checkLogin() {
-        var isLoggedIn = <%= isLoggedIn %>;
-        if (!isLoggedIn) {
-            alert("Please log in to use the search function.");
-            window.location.href = "login.jsp";
-            return false; // 阻止表单提交
-        }
-        return true;
-    }
-
-    function checkLoginForCart() {
-        var isLoggedIn = <%= isLoggedIn %>;
-        if (!isLoggedIn) {
-            alert("Please log in to view your cart.");
-            window.location.href = "login.jsp";
-            return false; // 阻止导航到cart页面
-        }
-        return true;
-    }
-</script>
-
 </body>
 </html>
