@@ -97,7 +97,15 @@
             align-items: center;
             gap: 10px; /* 按钮间距 */
         }
-
+        .empty-cart {
+            text-align: center;
+            margin-top: 50px;
+        }
+        .empty-cart i {
+            font-size: 100px;
+            color: #e2231a;
+            margin-bottom: 20px;
+        }
     </style>
 </head>
 <body>
@@ -190,6 +198,7 @@
 
     <% } else { %>
     <div class="empty-cart text-center">
+        <i class="fas fa-shopping-cart"></i> <!-- 小图标 -->
         <p>Your cart is empty. <a href="index.jsp">Continue Shopping</a></p>
     </div>
     <% } %>
