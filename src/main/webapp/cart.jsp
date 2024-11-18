@@ -175,7 +175,9 @@
         </div>
     </div>
     <div class="text-end mt-3">
-        <a href="order_confirmation.jsp" class="btn btn-success">Proceed to Checkout</a>
+        <form action="CheckoutServlet" method="post">
+            <button type="submit" class="btn btn-success">Proceed to Checkout</button>
+        </form>
         <a href="index.jsp" class="btn btn-secondary">Continue Shopping</a>
     </div>
     <% } else { %>
