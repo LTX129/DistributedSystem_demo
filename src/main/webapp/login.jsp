@@ -128,7 +128,7 @@
   <div class="qr-login">
     <h3>Scan QR Code for Secure Login</h3>
     <img src="https://via.placeholder.com/180" alt="QR Code">
-    <p>Open <a href="#">JD App</a> and scan the QR code</p>
+    <p>Open <a href="#">G3 Shopping App</a> and scan the QR code</p>
   </div>
 </div>
 

@@ -1,6 +1,8 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page import="java.util.List" %>
 <%@ page import="model.Product, DAO.ProductDAO" %>
+<%@ page import="DAO.ImgDAO" %>
+<%@ page import="java.util.Base64" %>
 
 <%
   model.User user = (model.User) session.getAttribute("user");  // 获取用户信息
@@ -151,9 +153,19 @@
 <body>
 <header class="d-flex justify-content-between align-items-center">
   <div class="logo d-flex align-items-center">
+    <%
+      ImgDAO imgDAO = new ImgDAO();
+      byte[] logoBytes = imgDAO.getLogoById(1); // 加载 id 为 1 的 logo 数据
+      String base64Image = "";
+
+      if (logoBytes != null) {
+        // 将 BLOB 数据转换为 Base64 编码
+        base64Image = Base64.getEncoder().encodeToString(logoBytes);
+      }
+    %>
+
     <a href="index.jsp" class="d-flex align-items-center">
-      <img src="https://www.jd.com/favicon.ico" alt="logo">
-      <span style="color: #ffffff; font-weight: bold; margin-left: 10px;">G3 Shopping</span>
+      <img src="data:image/png;base64,<%= base64Image %>" alt="logo" style="width: 150px; height: auto;">
     </a>
   </div>
   <div class="d-flex align-items-center">
