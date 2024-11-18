@@ -149,6 +149,15 @@
         .form-control {
             border-radius: 5px;
         }
+        .action-buttons .btn {
+            font-size: 1rem; /* 调整字体大小 */
+            border-radius: 20px; /* 圆角按钮 */
+            white-space: nowrap; /* 防止按钮内文字换行 */
+            text-transform: uppercase; /* 将文字转换为大写（可选） */
+        }
+        .action-buttons .btn:hover {
+            opacity: 0.9; /* 鼠标悬停时的效果 */
+        }
     </style>
 </head>
 <body>
@@ -173,15 +182,22 @@
             <a href="category.jsp?category=Books" class="btn">Books</a>
         </div>
     </div>
-    <div class="d-flex align-items-center">
-        <% if (isLoggedIn) { %>
-        <span class="me-2">Hello, <%= user.getUsername() %>!</span>
-        <a href="logout.jsp" class="btn-login">Logout</a>
-        <% } else { %>
-        <a href="login.jsp" class="btn-login">Login</a>
-        <a href="register.jsp" class="btn-login">Register</a>
-        <% } %>
+    <div class="d-flex align-items-center justify-content-between">
+        <div class="action-buttons d-flex">
+            <a href="OrderServlet" class="btn btn-primary me-2 px-4 py-2">All Orders</a>
+            <a href="cart.jsp" class="btn btn-success px-4 py-2" onclick="return checkLoginForCart();">Cart</a>
+        </div>
+        <div class="ms-5"> <!-- 添加额外的左边距 -->
+            <% if (isLoggedIn) { %>
+            <span class="me-2">Hello, <%= user.getUsername() %>!</span>
+            <a href="logout.jsp" class="btn-login">Logout</a>
+            <% } else { %>
+            <a href="login.jsp" class="btn-login">Login</a>
+            <a href="register.jsp" class="btn-login">Register</a>
+            <% } %>
+        </div>
     </div>
+
 </header>
 
 <div class="container">
