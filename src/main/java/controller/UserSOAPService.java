@@ -6,9 +6,21 @@ import model.User;
 import DAO.UserDAO;
 import jakarta.servlet.http.*;
 
+/**
+ * SOAP Web Service for user-related actions such as user registration and validation.
+ */
 @WebService(serviceName = "UserSOAPService")
 public class UserSOAPService extends HttpServlet {
 
+    /**
+     * Registers a new user.
+     *
+     * @param username the username of the user to be registered
+     * @param password the password of the user to be registered
+     * @param email the email of the user to be registered
+     * @param role the role of the user (e.g., "admin", "customer")
+     * @return a message indicating the result of the registration attempt
+     */
     @WebMethod
     public String registerUser(String username, String password, String email, String role) {
         try {
@@ -27,6 +39,13 @@ public class UserSOAPService extends HttpServlet {
         }
     }
 
+    /**
+     * Validates a user's login credentials.
+     *
+     * @param usernameOrEmail the username or email of the user to be validated
+     * @param password the password of the user to be validated
+     * @return true if the user credentials are valid, false otherwise
+     */
     @WebMethod
     public boolean validateUser(String usernameOrEmail, String password) {
         try {

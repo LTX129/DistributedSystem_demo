@@ -3,35 +3,52 @@ package model;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Represents a shopping cart that contains a list of {@link CartItem}s.
+ */
 public class Cart {
     private List<CartItem> items;
 
-    // 构造器
+    /**
+     * Constructs a new empty shopping cart.
+     */
     public Cart() {
         items = new ArrayList<>();
     }
 
-    // 添加商品到购物车
+    /**
+     * Adds a {@link CartItem} to the shopping cart. If the product is already in the cart,
+     * the quantity is updated.
+     *
+     * @param item The {@link CartItem} to be added to the cart.
+     */
     public void addItem(CartItem item) {
-        // 检查是否购物车已经存在该商品，若存在则更新数量
+        // Checks if the cart already contains the item, if so updates the quantity
         for (CartItem cartItem : items) {
             if (cartItem.getProduct().getId() == item.getProduct().getId()) {
                 cartItem.setQuantity(cartItem.getQuantity() + item.getQuantity());
                 return;
             }
         }
-        // 如果购物车中没有该商品，添加新的购物车项
+        // If the cart does not contain the item, adds a new cart item
         items.add(item);
     }
 
-    // 移除购物车中的商品
+    /**
+     * Removes an item from the cart based on its product ID.
+     *
+     * @param productId The ID of the product to be removed.
+     */
     public void removeItem(int productId) {
         items.removeIf(item -> item.getProduct().getId() == productId);
     }
 
-    // 获取购物车所有商品
+    /**
+     * Retrieves the list of items in the shopping cart.
+     *
+     * @return A list of {@link CartItem}s in the cart.
+     */
     public List<CartItem> getItems() {
         return items;
     }
-
 }

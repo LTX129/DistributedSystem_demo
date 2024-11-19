@@ -9,9 +9,17 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Data Access Object (DAO) class for managing orders and their items.
+ */
 public class OrderDAO {
 
-    // 保存订单及其订单项
+    /**
+     * Saves the order and its associated items to the database.
+     *
+     * @param order the order to be saved
+     * @throws SQLException if there is an issue saving the order or its items to the database
+     */
     public void saveOrder(Order order) throws SQLException {
         Connection conn = null;
         PreparedStatement pstmt = null;
@@ -21,7 +29,7 @@ public class OrderDAO {
             conn = DBConnection.initializeDatabase();
             conn.setAutoCommit(false);
 
-            // 插入订单信息
+            // Insert order information
             String insertOrderSQL = "INSERT INTO orders (user_id, shipping_address, payment_method) VALUES (?, ?, ?)";
             pstmt = conn.prepareStatement(insertOrderSQL, Statement.RETURN_GENERATED_KEYS);
             pstmt.setInt(1, order.getUserId());
@@ -34,7 +42,7 @@ public class OrderDAO {
                 int orderId = generatedKeys.getInt(1);
                 order.setOrderId(orderId);
 
-                // 插入订单项信息
+                // Insert order items
                 String insertOrderItemSQL = "INSERT INTO order_items (order_id, product_id, quantity) VALUES (?, ?, ?)";
                 for (OrderItem item : order.getItems()) {
                     try (PreparedStatement itemStmt = conn.prepareStatement(insertOrderItemSQL)) {
@@ -59,7 +67,12 @@ public class OrderDAO {
         }
     }
 
-    // 根据用户 ID 获取订单
+    /**
+     * Retrieves all orders associated with a user ID from the database.
+     *
+     * @param userId the ID of the user whose orders are to be retrieved
+     * @return a list of orders belonging to the specified user
+     */
     public List<Order> getOrdersByUserId(int userId) {
         List<Order> orders = new ArrayList<>();
         Connection conn = null;
@@ -81,7 +94,7 @@ public class OrderDAO {
                 order.setShippingAddress(rs.getString("shipping_address"));
                 order.setPaymentMethod(rs.getString("payment_method"));
 
-                // 获取订单项
+                // Get order items
                 order.setItems(getOrderItemsByOrderId(order.getOrderId()));
                 orders.add(order);
             }
@@ -100,7 +113,12 @@ public class OrderDAO {
         return orders;
     }
 
-    // 获取订单项
+    /**
+     * Retrieves the items associated with a specific order ID from the database.
+     *
+     * @param orderId the ID of the order whose items are to be retrieved
+     * @return a list of order items belonging to the specified order
+     */
     private List<OrderItem> getOrderItemsByOrderId(int orderId) {
         List<OrderItem> items = new ArrayList<>();
         Connection conn = null;
@@ -119,7 +137,7 @@ public class OrderDAO {
                 item.setOrderItemId(rs.getInt("order_item_id"));
                 item.setOrderId(rs.getInt("order_id"));
 
-                // 获取商品信息
+                // Get product information
                 ProductDAO productDAO = new ProductDAO();
                 Product product = productDAO.getProductById(rs.getInt("product_id"));
                 item.setProduct(product);

@@ -6,17 +6,32 @@ import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 import java.util.Base64;
 
+/**
+ * Utility class for performing symmetric encryption and decryption using the AES algorithm.
+ */
 public class SymmetricEncryptionUtil {
     private static final String ALGORITHM = "AES";
 
-    // Generate a new AES key
+    /**
+     * Generates a new AES key.
+     *
+     * @return the generated AES secret key
+     * @throws Exception if the key generation fails
+     */
     public static SecretKey generateKey() throws Exception {
         KeyGenerator keyGenerator = KeyGenerator.getInstance(ALGORITHM);
         keyGenerator.init(128); // You can choose 128, 192, or 256 bits
         return keyGenerator.generateKey();
     }
 
-    // Encrypt a plain text
+    /**
+     * Encrypts a plain text using the provided AES key.
+     *
+     * @param plainText the text to be encrypted
+     * @param secretKey the AES key to be used for encryption
+     * @return the encrypted text, encoded in Base64
+     * @throws Exception if encryption fails
+     */
     public static String encrypt(String plainText, SecretKey secretKey) throws Exception {
         Cipher cipher = Cipher.getInstance(ALGORITHM);
         cipher.init(Cipher.ENCRYPT_MODE, secretKey);
@@ -24,7 +39,14 @@ public class SymmetricEncryptionUtil {
         return Base64.getEncoder().encodeToString(encryptedBytes);
     }
 
-    // Decrypt a cipher text
+    /**
+     * Decrypts a cipher text using the provided AES key.
+     *
+     * @param cipherText the text to be decrypted (Base64 encoded)
+     * @param secretKey the AES key to be used for decryption
+     * @return the decrypted text
+     * @throws Exception if decryption fails
+     */
     public static String decrypt(String cipherText, SecretKey secretKey) throws Exception {
         Cipher cipher = Cipher.getInstance(ALGORITHM);
         cipher.init(Cipher.DECRYPT_MODE, secretKey);

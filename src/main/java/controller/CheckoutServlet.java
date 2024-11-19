@@ -11,22 +11,34 @@ import model.Order;
 import DAO.OrderDAO;
 import model.OrderItem;
 
+/**
+ * Servlet implementation for handling the checkout process.
+ * Processes user orders, validates input, and manages order persistence.
+ */
 public class CheckoutServlet extends HttpServlet {
 
+    /**
+     * Handles POST requests for the checkout process.
+     * Validates the cart, collects user input for shipping and payment, creates an order,
+     * and redirects the user to the appropriate page based on the outcome.
+     *
+     * @param request  the {@link HttpServletRequest} object containing the client's request
+     * @param response the {@link HttpServletResponse} object containing the servlet's response
+     * @throws ServletException if an error occurs during request processing
+     * @throws IOException      if an input or output error is detected
+     */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         HttpSession session = request.getSession();
         Cart cart = (Cart) session.getAttribute("cart");
 
         if (cart == null || cart.getItems().isEmpty()) {
-            // 如果购物车为空，重定向到购物车页面
             request.setAttribute("message", "Your cart is empty. Please add items to your cart before checking out.");
             RequestDispatcher dispatcher = request.getRequestDispatcher("cart.jsp");
             dispatcher.forward(request, response);
             return;
         }
 
-        // 获取用户提交的订单信息
         String shippingAddress = request.getParameter("shippingAddress");
         String paymentMethod = request.getParameter("paymentMethod");
 
@@ -44,20 +56,18 @@ public class CheckoutServlet extends HttpServlet {
             return;
         }
 
-        // 获取用户 ID
         Integer userId = (Integer) session.getAttribute("userId");
         if (userId == null) {
             response.sendRedirect("login.jsp");
             return;
         }
-        // 创建新的订单对象
+
         Order order = new Order();
         order.setUserId(userId);
         order.setShippingAddress(shippingAddress);
         order.setPaymentMethod(paymentMethod);
         order.setItems(new ArrayList<>());
 
-        // 将购物车中的商品添加到订单中
         for (CartItem cartItem : cart.getItems()) {
             OrderItem orderItem = new OrderItem();
             orderItem.setProduct(cartItem.getProduct());
@@ -65,7 +75,6 @@ public class CheckoutServlet extends HttpServlet {
             order.getItems().add(orderItem);
         }
 
-        // 保存订单到数据库
         try {
             OrderDAO orderDAO = new OrderDAO();
             orderDAO.saveOrder(order);
@@ -77,15 +86,12 @@ public class CheckoutServlet extends HttpServlet {
             return;
         }
 
-        // 模拟结账过程，例如清空购物车和显示成功页面
-        session.removeAttribute("cart");  // 清空购物车
+        session.removeAttribute("cart");
 
-        // 设置结账成功的消息
         request.setAttribute("message", "Checkout successful! Thank you for your purchase.");
         request.setAttribute("shippingAddress", shippingAddress);
         request.setAttribute("paymentMethod", paymentMethod);
 
-        // 重定向到结账成功页面
         RequestDispatcher dispatcher = request.getRequestDispatcher("checkout_success.jsp");
         dispatcher.forward(request, response);
     }

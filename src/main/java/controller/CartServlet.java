@@ -10,9 +10,21 @@ import jakarta.servlet.*;
 import jakarta.servlet.http.*;
 import java.io.IOException;
 
+/**
+ * Servlet implementation for handling shopping cart operations.
+ * This servlet supports actions such as adding, updating, and removing items from a user's cart.
+ */
 public class CartServlet extends HttpServlet {
     private CartDAO cartDAO = new CartDAO();
 
+    /**
+     * Handles GET requests for the cart.
+     *
+     * @param request  the {@link HttpServletRequest} object containing the client's request
+     * @param response the {@link HttpServletResponse} object containing the servlet's response
+     * @throws ServletException if an error occurs during request processing
+     * @throws IOException      if an input or output error is detected
+     */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String action = request.getParameter("action");
@@ -32,13 +44,20 @@ public class CartServlet extends HttpServlet {
                 }
             }
 
-            // 重定向回购物车页面
             response.sendRedirect("cart.jsp");
         } else {
             response.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED, "This method is not supported for the requested action.");
         }
     }
 
+    /**
+     * Handles POST requests for the cart.
+     *
+     * @param request  the {@link HttpServletRequest} object containing the client's request
+     * @param response the {@link HttpServletResponse} object containing the servlet's response
+     * @throws ServletException if an error occurs during request processing
+     * @throws IOException      if an input or output error is detected
+     */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         HttpSession session = request.getSession();

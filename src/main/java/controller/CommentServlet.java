@@ -8,8 +8,21 @@ import DAO.ProductCommentDAO;
 import java.io.IOException;
 import java.sql.SQLException;
 
+/**
+ * Servlet for handling product comments and ratings.
+ * Supports viewing the comment form and submitting comments for a specific product.
+ */
 public class CommentServlet extends HttpServlet {
 
+    /**
+     * Handles GET requests to display the comment form for a specific product and user.
+     * Passes product ID and user ID as request attributes to the comment form.
+     *
+     * @param request  the {@link HttpServletRequest} object containing the client's request
+     * @param response the {@link HttpServletResponse} object containing the servlet's response
+     * @throws ServletException if an error occurs during request processing
+     * @throws IOException      if an input or output error is detected
+     */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         int productId = Integer.parseInt(request.getParameter("productId"));
@@ -22,6 +35,16 @@ public class CommentServlet extends HttpServlet {
         dispatcher.forward(request, response);
     }
 
+    /**
+     * Handles POST requests to submit a comment and rating for a product.
+     * Validates input data, creates a {@link ProductComment} object, and persists it using {@link ProductCommentDAO}.
+     * Redirects to the product page after successful submission.
+     *
+     * @param request  the {@link HttpServletRequest} object containing the client's request
+     * @param response the {@link HttpServletResponse} object containing the servlet's response
+     * @throws ServletException if an error occurs during request processing
+     * @throws IOException      if an input or output error is detected
+     */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         try {

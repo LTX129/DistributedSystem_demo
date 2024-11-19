@@ -10,6 +10,11 @@ import java.security.spec.PKCS8EncodedKeySpec;
 import javax.crypto.Cipher;
 import java.util.Base64;
 
+/**
+ * Utility class for performing asymmetric encryption (RSA) operations.
+ * This class provides methods for generating RSA key pairs, encrypting and decrypting data,
+ * and loading keys from a cache.
+ */
 public class AsymmetricEncryptionUtil {
     private static final String ALGORITHM = "RSA";
 
@@ -23,7 +28,12 @@ public class AsymmetricEncryptionUtil {
         }
     }
 
-    // Generate an RSA key pair and store in the cache if not already available
+    /**
+     * Generates an RSA key pair and stores it in the cache if not already available.
+     * If keys are already present in the cache, they are reused.
+     *
+     * @throws Exception If an error occurs during key generation or storage.
+     */
     public static void generateAndStoreKeyPair() throws Exception {
         KeyPair keyPair = getKeyPairFromCache();
 
@@ -42,7 +52,13 @@ public class AsymmetricEncryptionUtil {
         }
     }
 
-    // Load a public key from the cache
+    /**
+     * Loads the public key from the cache.
+     * If the public key is not found, a new key pair is generated and stored in the cache.
+     *
+     * @return The public key.
+     * @throws Exception If an error occurs while loading or generating the key.
+     */
     public static PublicKey loadPublicKey() throws Exception {
         PublicKey publicKey = (PublicKey) CacheUtility.get("public_key");
         if (publicKey == null) {
@@ -53,7 +69,13 @@ public class AsymmetricEncryptionUtil {
         return publicKey;
     }
 
-    // Load a private key from the cache
+    /**
+     * Loads the private key from the cache.
+     * If the private key is not found, a new key pair is generated and stored in the cache.
+     *
+     * @return The private key.
+     * @throws Exception If an error occurs while loading or generating the key.
+     */
     public static PrivateKey loadPrivateKey() throws Exception {
         PrivateKey privateKey = (PrivateKey) CacheUtility.get("private_key");
         if (privateKey == null) {
@@ -64,7 +86,14 @@ public class AsymmetricEncryptionUtil {
         return privateKey;
     }
 
-    // Encrypt data using the public key
+    /**
+     * Encrypts the given plain text using the specified public key.
+     *
+     * @param plainText The plain text to encrypt.
+     * @param publicKey The public key to use for encryption.
+     * @return The encrypted text, encoded as a Base64 string.
+     * @throws Exception If an error occurs during encryption.
+     */
     public static String encrypt(String plainText, PublicKey publicKey) throws Exception {
         Cipher cipher = Cipher.getInstance(ALGORITHM);
         cipher.init(Cipher.ENCRYPT_MODE, publicKey);
@@ -72,7 +101,14 @@ public class AsymmetricEncryptionUtil {
         return Base64.getEncoder().encodeToString(encryptedBytes);
     }
 
-    // Decrypt data using the private key
+    /**
+     * Decrypts the given cipher text using the specified private key.
+     *
+     * @param cipherText The cipher text to decrypt, encoded as a Base64 string.
+     * @param privateKey The private key to use for decryption.
+     * @return The decrypted plain text.
+     * @throws Exception If an error occurs during decryption.
+     */
     public static String decrypt(String cipherText, PrivateKey privateKey) throws Exception {
         Cipher cipher = Cipher.getInstance(ALGORITHM);
         cipher.init(Cipher.DECRYPT_MODE, privateKey);
@@ -81,7 +117,11 @@ public class AsymmetricEncryptionUtil {
         return new String(decryptedBytes);
     }
 
-    // Helper method to get the key pair from cache
+    /**
+     * Helper method to retrieve the key pair from the cache.
+     *
+     * @return The RSA key pair, or null if not found in the cache.
+     */
     private static KeyPair getKeyPairFromCache() {
         PublicKey publicKey = (PublicKey) CacheUtility.get("public_key");
         PrivateKey privateKey = (PrivateKey) CacheUtility.get("private_key");
@@ -92,7 +132,12 @@ public class AsymmetricEncryptionUtil {
         return null;
     }
 
-    // 获取字符串公钥用于提供给客户端
+    /**
+     * Retrieves the public key as a Base64-encoded string.
+     *
+     * @return The Base64-encoded public key.
+     * @throws Exception If an error occurs while loading or encoding the public key.
+     */
     public static String getPublicKey() throws Exception {
         PublicKey publicKey = loadPublicKey();
         return Base64.getEncoder().encodeToString(publicKey.getEncoded());

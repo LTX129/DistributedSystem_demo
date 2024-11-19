@@ -2,37 +2,66 @@ package model;
 
 import java.math.BigDecimal;
 
+/**
+ * Represents an item in the shopping cart, including the product and its quantity.
+ */
 public class CartItem {
     private Product product;
     private int quantity;
 
-    // 构造器
+    /**
+     * Constructs a {@link CartItem} with a specified product and quantity.
+     *
+     * @param product  The product for this cart item.
+     * @param quantity The quantity of the product in the cart.
+     */
     public CartItem(Product product, int quantity) {
         this.product = product;
         this.quantity = quantity;
     }
 
-    // 获取商品
+    /**
+     * Retrieves the product associated with this cart item.
+     *
+     * @return The {@link Product} for this cart item.
+     */
     public Product getProduct() {
         return product;
     }
 
-    // 设置商品
+    /**
+     * Sets the product for this cart item.
+     *
+     * @param product The product to set.
+     */
     public void setProduct(Product product) {
         this.product = product;
     }
 
-    // 获取数量
+    /**
+     * Retrieves the quantity of the product in this cart item.
+     *
+     * @return The quantity of the product.
+     */
     public int getQuantity() {
         return quantity;
     }
 
-    // 设置数量
+    /**
+     * Sets the quantity of the product in this cart item.
+     *
+     * @param quantity The quantity to set.
+     */
     public void setQuantity(int quantity) {
         this.quantity = quantity;
     }
 
-    // 计算单个商品的总价
+    /**
+     * Calculates the total price for this cart item by multiplying the product's price
+     * by the quantity.
+     *
+     * @return The total price for this cart item.
+     */
     public BigDecimal getTotalPrice() {
         return product.getPrice().multiply(new BigDecimal(quantity));
     }

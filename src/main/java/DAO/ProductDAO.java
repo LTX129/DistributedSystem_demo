@@ -7,9 +7,17 @@ import java.util.List;
 import model.Product;
 import util.DBConnection;
 
+/**
+ * Data Access Object (DAO) class for managing products in the database.
+ */
 public class ProductDAO {
 
-    // 获取所有产品
+    /**
+     * Retrieves all products from the database.
+     *
+     * @return a list of all products
+     * @throws Exception if there is an error accessing the database
+     */
     public List<Product> getAllProducts() throws Exception {
         Connection conn = DBConnection.initializeDatabase();
         String query = "SELECT products.*, products_img.image " +
@@ -35,7 +43,12 @@ public class ProductDAO {
         return products;
     }
 
-    // 根据类别获取商品列表
+    /**
+     * Retrieves a list of products by category from the database.
+     *
+     * @param category the category of the products to retrieve
+     * @return a list of products in the specified category
+     */
     public List<Product> getProductsByCategory(String category) {
         List<Product> products = new ArrayList<>();
         String query = "SELECT p.*, pi.image " +
@@ -46,7 +59,7 @@ public class ProductDAO {
         try (Connection conn = DBConnection.initializeDatabase();
              PreparedStatement pstmt = conn.prepareStatement(query)) {
 
-            pstmt.setString(1, category); // 使用精确匹配
+            pstmt.setString(1, category); // Use exact match for category
             ResultSet rs = pstmt.executeQuery();
 
             while (rs.next()) {
@@ -56,7 +69,7 @@ public class ProductDAO {
                 product.setDescription(rs.getString("description"));
                 product.setPrice(rs.getBigDecimal("price"));
                 product.setStock(rs.getInt("stock"));
-                product.setCategory(rs.getString("category")); // 添加类别字段
+                product.setCategory(rs.getString("category"));
                 product.setImage(rs.getBinaryStream("image"));
                 products.add(product);
             }
@@ -68,7 +81,12 @@ public class ProductDAO {
         return products;
     }
 
-    // 根据产品 ID 获取商品详情
+    /**
+     * Retrieves the details of a product by its ID.
+     *
+     * @param productId the ID of the product to retrieve
+     * @return the product with the specified ID, or null if not found
+     */
     public Product getProductById(int productId) {
         Product product = null;
         String query = "SELECT p.*, pi.image " +
@@ -89,7 +107,7 @@ public class ProductDAO {
                 product.setDescription(rs.getString("description"));
                 product.setPrice(rs.getBigDecimal("price"));
                 product.setStock(rs.getInt("stock"));
-                product.setCategory(rs.getString("category")); // 如果有类别字段
+                product.setCategory(rs.getString("category"));
                 product.setImage(rs.getBinaryStream("image"));
             }
 
@@ -101,6 +119,13 @@ public class ProductDAO {
         }
         return product;
     }
+
+    /**
+     * Searches for products based on a query string.
+     *
+     * @param query the search query string
+     * @return a list of products that match the query
+     */
     public List<Product> searchProducts(String query) {
         List<Product> products = new ArrayList<>();
         String sql = "SELECT * FROM products WHERE name LIKE ? OR description LIKE ?";

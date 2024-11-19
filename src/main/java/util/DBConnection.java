@@ -9,17 +9,22 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * Utility class for managing database connections using HikariCP.
+ * This class initializes the primary and secondary data sources and provides methods
+ * to retrieve connections, close data sources, and clear encryption keys.
+ */
 public class DBConnection {
 
     private static HikariDataSource primaryDataSource;
     private static HikariDataSource secondaryDataSource;
-    private static volatile boolean usePrimary = true;  // 用于标识当前是否使用主数据源
+    private static volatile boolean usePrimary = true;
     private static boolean debug = true;
     private static final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 
     static {
         try {
-            // 初始化主数据源配置
+            // Initialize primary data source configuration
             HikariConfig primaryConfig = new HikariConfig();
             primaryConfig.setDriverClassName("com.mysql.cj.jdbc.Driver");
             primaryConfig.setJdbcUrl(PropertiesLoader.getProperty("db.primary.url"));
@@ -29,7 +34,7 @@ public class DBConnection {
             primaryConfig.setMinimumIdle(PropertiesLoader.getIntProperty("db.primary.minimumIdle"));
 
             try {
-                // 创建主数据源实例
+                // Create primary data source instance
                 primaryDataSource = new HikariDataSource(primaryConfig);
                 if (debug) {
                     System.out.println("DBConnection: Primary HikariCP DataSource initialized");
@@ -40,7 +45,7 @@ public class DBConnection {
                 }
             }
 
-            // 初始化从数据源配置
+            // Initialize secondary data source configuration
             HikariConfig secondaryConfig = new HikariConfig();
             secondaryConfig.setDriverClassName("com.mysql.cj.jdbc.Driver");
             secondaryConfig.setJdbcUrl(PropertiesLoader.getProperty("db.secondary.url"));
@@ -50,7 +55,7 @@ public class DBConnection {
             secondaryConfig.setMinimumIdle(PropertiesLoader.getIntProperty("db.secondary.minimumIdle"));
 
             try {
-                // 尝试创建从数据源实例
+                // Attempt to create secondary data source instance
                 secondaryDataSource = new HikariDataSource(secondaryConfig);
                 if (debug) {
                     System.out.println("DBConnection: Secondary HikariCP DataSource initialized");
@@ -60,7 +65,8 @@ public class DBConnection {
                     System.err.println("DBConnection Warning: Failed to initialize Secondary HikariCP DataSource. Secondary database will not be available.");
                 }
             }
-            // 启动心跳检测任务
+
+            // Start heartbeat check task
             startHeartbeatCheck();
         } catch (Exception e) {
             System.err.println("DBConnection Error: Failed to initialize HikariCP DataSource");
@@ -69,6 +75,13 @@ public class DBConnection {
         }
     }
 
+    /**
+     * Initializes and returns a database connection.
+     * If the primary data source is unavailable, it attempts to connect to the secondary data source.
+     *
+     * @return a {@link Connection} to the database
+     * @throws SQLException if no available data source is initialized or if connection fails
+     */
     public static Connection initializeDatabase() throws SQLException {
         if (usePrimary && primaryDataSource != null) {
             try {
@@ -91,6 +104,9 @@ public class DBConnection {
         }
     }
 
+    /**
+     * Closes both the primary and secondary data sources and shuts down the heartbeat check task.
+     */
     public static void closeDataSource() {
         if (primaryDataSource != null) {
             primaryDataSource.close();
@@ -107,6 +123,9 @@ public class DBConnection {
         scheduler.shutdown();
     }
 
+    /**
+     * Clears the encryption keys from the cache.
+     */
     public static void clearEncryptionKeys() {
         CacheUtility.remove("public_key");
         CacheUtility.remove("private_key");
@@ -115,6 +134,10 @@ public class DBConnection {
         }
     }
 
+    /**
+     * Constructor for the DBConnection class.
+     * Initializes the HikariCP data sources if they are not already initialized.
+     */
     public DBConnection() {
         if (debug) {
             System.out.println("DBConnection: Initializing HikariCP DataSource...");
@@ -122,7 +145,8 @@ public class DBConnection {
     }
 
     /**
-     * 启动心跳检测任务，定期检查主数据库的可用性
+     * Starts a heartbeat check task that periodically checks the availability of the primary database.
+     * If the primary database becomes available, it switches back to using the primary data source.
      */
     private static void startHeartbeatCheck() {
         Runnable heartbeatTask = () -> {
@@ -142,7 +166,7 @@ public class DBConnection {
             }
         };
 
-        // 每 30 秒检查一次主数据源的可用性
+        // Check the primary data source's availability every 30 seconds
         scheduler.scheduleAtFixedRate(heartbeatTask, 30, 30, TimeUnit.SECONDS);
     }
 }
